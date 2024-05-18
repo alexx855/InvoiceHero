@@ -1,5 +1,6 @@
 'use client'
 
+import { InvoiceList } from '@/components/InvoiceList'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 
 function App() {
@@ -41,6 +42,8 @@ function App() {
         <div>{status}</div>
         <div>{error?.message}</div>
       </div>
+
+      <InvoiceList />
     </>
   )
 }

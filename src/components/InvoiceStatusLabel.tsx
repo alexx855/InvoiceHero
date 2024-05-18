@@ -1,4 +1,4 @@
-import { InvoiceStatus } from "@/invoice"
+import type { InvoiceStatus } from "@/invoice"
 
 export const InvoiceStatusLabel = ({ status }: { status: InvoiceStatus }) => {
   switch (status) {

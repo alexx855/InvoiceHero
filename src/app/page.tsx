@@ -1,6 +1,7 @@
 'use client'
 
 import { InvoiceList } from '@/components/InvoiceList'
+import { Menu } from '@/components/Menu'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 
 function App() {
@@ -10,6 +11,8 @@ function App() {
 
   return (
     <>
+      <Menu />
+
       <div>
         <h2>Account</h2>
 

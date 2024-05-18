@@ -2,9 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { type ReactNode } from 'react'
-
 import { Providers } from './providers'
-import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,13 +15,6 @@ export default function RootLayout(props: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <nav className="flex justify-around bg-blue-500 p-4">
-          <Link className="text-white hover:text-blue-200" href="/">Home</Link>
-          <Link className="text-white hover:text-blue-200" href="/create">Create</Link>
-          <Link className="text-white hover:text-blue-200" href="/invoice/1">Invoice view</Link>
-          <Link className="text-white hover:text-blue-200" href="/invoice/1/download">PDF download</Link>
-          <Link target='_blank' className="text-white hover:text-blue-200" href="/api/1/pdf">PDF view</Link>
-        </nav>
         <Providers>{props.children}</Providers>
       </body>
     </html>

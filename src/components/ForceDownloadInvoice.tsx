@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import { toHex } from "viem";
 
 export function ForceDownloadInvoice({ tokenId }: { tokenId: string }) {
 
@@ -12,7 +11,7 @@ export function ForceDownloadInvoice({ tokenId }: { tokenId: string }) {
       const headers = new Headers()
       headers.append('Content-Disposition', 'attachment')
 
-      const response = await fetch(`/api/${tokenId}/pdf/?force_download`, { headers })
+      const response = await fetch(`/api/pdf/${tokenId}`, { headers })
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
 
@@ -28,6 +27,6 @@ export function ForceDownloadInvoice({ tokenId }: { tokenId: string }) {
   }, [tokenId])
 
 
-  return <p><Link className=" text-blue-600 hover:text-blue-700 hover:underline" href={`/api/${tokenId}/pdf?force_download`}>Click here</Link> if the download does not start automatically.</p>
+  return <p><Link className=" text-blue-600 hover:text-blue-700 hover:underline" href={`/api/pdf/${tokenId}?force_download`}>Click here</Link> if the download does not start automatically.</p>
 
 }

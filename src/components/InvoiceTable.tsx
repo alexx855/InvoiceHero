@@ -1,4 +1,3 @@
-'use client'
 import { formatAmount, type Invoice } from '@/invoice'
 import { InvoiceStatusLabel } from './InvoiceStatusLabel'
 

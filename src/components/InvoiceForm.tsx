@@ -228,7 +228,7 @@ export function InvoiceForm({
         <textarea id="customer_notes" name="customer_notes" rows={4} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder={invoice.customer_notes} defaultValue={IS_DEV ? invoice.customer_notes : undefined}></textarea>
       </div>
 
-      <div className="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+      <div className="flex items-start mb-6">
         <button
           onClick={() => console.log('Download invoice')}
           type="button"
@@ -237,9 +237,7 @@ export function InvoiceForm({
         >
           Download
         </button>
-      </div>
-
-      <div className="flex items-start mb-6">
+        <div>
         <button disabled={!isConnected} type="submit" name="save" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
           Save Invoice
         </button>
@@ -248,6 +246,7 @@ export function InvoiceForm({
         ) : (
           <span className="font-medium">This invoice will be saved to your account, would cost you a small fee, to store it on the blockchain forever.</span>
         )}
+        </div>
       </div>
     </form>
   )

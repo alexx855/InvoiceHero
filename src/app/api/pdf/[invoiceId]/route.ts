@@ -1,19 +1,23 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import puppeteer from 'puppeteer'
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const force_download = request.url.includes('?force_download')
-    const browser = await puppeteer.launch({ ignoreDefaultArgs: ['--disable-extensions'] })
+    const parts = request.url.split('/');
+    const invoiceId = parts[parts.length - 1];
+
+    const browser = process.env.NODE_ENV === 'production' ?
+      await puppeteer.connect({ browserWSEndpoint: process.env.BROWSERLESS_WS_URL })
+      :
+      await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] }) 
+
     const page = await browser.newPage()
-    const goto = request.url.replace('/api/pdf/', '/invoice/')
-    console.log('request.url', request.url)
-    console.log('goto', goto)
+    const goto = process.env.NEXT_PUBLIC_BASE_URL + '/invoice/' + invoiceId
     await page.goto(goto)
     await page.emulateMediaType('screen')
     const pdfBuffer = await page.pdf({ format: 'A4' })
     await browser.close()
-    // return image as response
     const response = new NextResponse(pdfBuffer, {
       headers: {
         'Content-Type': ' application/pdf',
@@ -28,5 +32,4 @@ export async function GET(request: Request) {
       statusText: 'Internal Server Error',
     })
   }
-
 }

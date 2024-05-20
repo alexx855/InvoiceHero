@@ -1,66 +1,49 @@
-## Foundry
+# InvoiceHero
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Foundry consists of:
+Generate professional invoices for free in seconds, unlock blockchain-powered security and crypto payments. Perfect for freelancers, entrepreneurs, and businesses of all sizes!
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Features
 
-## Documentation
+**Free Tier: PDF Downloads:**  High-quality, printable invoices. 
 
-https://book.getfoundry.sh/
+**Premium Tier (Blockchain-Powered):**
+(No subscription or credit cards required, the user just pay to save invoice onchain, the cost its dynamic to cover the blockchain fees when you're ready to send them.)
 
-## Usage
+*   **Secure Sharing:**  Share invoices via unique, private links.
+*   **Privacy and Security:** Lit Protocol encrypts your data and stores it on a decentralized network.
+*   **Crypto Payments:** Accept a wide range of cryptocurrencies through Squid Router.
 
-### Build
+## Why InvoiceHero?
 
-```shell
-$ forge build
-```
+*   **User-Friendly:**  No blockchain knowledge required to get started.
+*   **Future-Proof:**  Embrace the power of web3 and crypto payments.
 
-### Test
+## Tech Stack
 
-```shell
-$ forge test
-```
+*   **Frontend:** React, Next.js, Viem, Wagmi
+*   **Backend:** Solidity, Node.js, browserless/chromium (headless browser)
+*   **Web3:** Lit Protocol, Squid Router, Fleek (decentralized hosting)
 
-### Format
+## Get Started
 
-```shell
-$ forge fmt
-```
+1.  **Visit our website:** [https://invoice-hero.vercel.app](https://invoice-hero.vercel.app) 
+2.  **Create your free account, or not 🫡**
+3.  **Start invoicing!**
 
-### Gas Snapshots
+## Development
 
-```shell
-$ forge snapshot
-```
+Interested in contributing? feel free to fork the repository and submit a pull request. We're always looking for talented developers to join our team!
 
-### Anvil
+1.  **Fork and clone the repository:**  `https://github.com/alexx855/InvoiceHero.git`
+2.  **Install dependencies:**  `pnpm install`
+3.  **Run browserless with docker: (optional)**  `docker run -p 3000:3000 ghcr.io/browserless/chromium` and add `BROWSERLESS_WS_URL=ws://localhost:3000` to your `.env.local`, also, get the dev url or ip:port add it to your `.env.local`, for example: `NEXT_PUBLIC_BASE_URL=http://192.168.56.1:3001` (docker uses a different network than your host machine and it will not work with localhost by default)
+4.  **Start the local anvil blockachain:**  `anvil`
+5.  **Deploy to anvil:** `pnpm run deploy:anvil`
+6.  **Start the development server:** `pnpm run dev`
+7.  **Open your browser:**  `http://localhost:3001`
 
-```shell
-$ anvil
-```
+## License
 
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+MIT License

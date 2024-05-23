@@ -2,20 +2,47 @@
 "use client"
 import { InvoiceStatusLabel } from '@/components/InvoiceStatusLabel'
 import Link from 'next/link';
-import { useAccount } from 'wagmi';
-import { useState } from 'react';
+import { useAccount, useChainId, useReadContract } from 'wagmi';
+import { useEffect, useState } from 'react';
 import { DownloadInvoiceButton } from './DownloadInvoiceButton';
 import { DeleteInvoiceButton } from './DeleteInvoiceButton';
 import { Invoice, formatAmount } from '@/invoice';
 import { toast } from 'sonner';
+import { invoiceHeroConfig } from '@/generated';
+import { INVOICE_MOCK } from '@/constants';
 
 export function InvoiceList() {
   const { address, isConnected } = useAccount()
+  const chainId = useChainId()
   const [invoices, setInvoices] = useState<Invoice[]>([])
 
+  const { data, error, isLoading } = useReadContract({
+    abi: invoiceHeroConfig.abi,
+    address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
+    functionName: 'balanceOf',
+    args: [address!],
+  })
+
+  // create mock invoices for now
+  useEffect(() => {
+    console.log('data', data)
+    if (data) {
+      const invoices = [...Array(Number(data))].map((_, i) => ({
+        ...INVOICE_MOCK,
+        id: i.toString(),
+        invoice_number: i.toString(),
+      }))
+      setInvoices(invoices)
+    }
+  }, [data])
+
+  useEffect(() => {
+    if (error) {
+      toast.error('Error fetching invoices')
+    }
+  }, [error])
+
   const onDeleteInvoice = async (invoiceId: string, result: `0x${string}`) => {
-    console.log('onDeleteInvoice invoice', invoiceId)
-    setInvoices(invoices.filter((invoice) => invoice.id !== invoiceId))
     toast.success(`Invoice ${invoiceId} deleted`, {
       action: {
         label: 'View explorer',
@@ -25,11 +52,13 @@ export function InvoiceList() {
       },
       duration: 10000
     })
+
+    // optimistic update
+    setInvoices(invoices.filter((invoice) => invoice.id !== invoiceId))
   }
 
   return (
     <>
-      <h2 className='mb-5 text-2xl sr-only'>Invoices: <small>{address}</small></h2>
       <div className="overflow-x-auto relative">
         <div className="mb-6 relative bg-white shadow-md sm:rounded-lg overflow-hidden">
           <table className="w-full m-0 text-sm text-left text-gray-500">
@@ -85,6 +114,8 @@ export function InvoiceList() {
                 <tr className="border-b">
                     <td colSpan={6} className="px-4 py-3">
                     {!isConnected && <p className='mt-2'>Please connect your wallet to view your invoices</p>}
+                      {isConnected && !invoices.length && <p className='mt-2'>No invoices found</p>}
+                      {isConnected && isLoading && <p className='mt-2'>Loading...</p>}
                   </td>
                 </tr>
               )}

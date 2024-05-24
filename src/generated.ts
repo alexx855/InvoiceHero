@@ -2156,6 +2156,10 @@ export const iMulticall3Abi = [
 // InvoiceHero
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * - [__View Contract on Base Basescan__](https://basescan.org/address/0x74CDBb00562a6d4B3Ff5A8f83edDddB04352083e)
+ * -
+ */
 export const invoiceHeroAbi = [
   { type: 'constructor', inputs: [], stateMutability: 'nonpayable' },
   {
@@ -2184,10 +2188,7 @@ export const invoiceHeroAbi = [
   },
   {
     type: 'function',
-    inputs: [
-      { name: 'ciphertext', internalType: 'bytes', type: 'bytes' },
-      { name: 'dataHash', internalType: 'bytes', type: 'bytes' },
-    ],
+    inputs: [],
     name: 'createInvoice',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'nonpayable',
@@ -2211,9 +2212,16 @@ export const invoiceHeroAbi = [
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'getInvoiceData',
     outputs: [
-      { name: '', internalType: 'bytes', type: 'bytes' },
-      { name: '', internalType: 'bytes', type: 'bytes' },
+      { name: '', internalType: 'string', type: 'string' },
+      { name: '', internalType: 'string', type: 'string' },
     ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
+    name: 'getInvoicesByOwner',
+    outputs: [{ name: '', internalType: 'uint256[]', type: 'uint256[]' }],
     stateMutability: 'view',
   },
   {
@@ -2550,7 +2558,6 @@ export const invoiceHeroAbi = [
     ],
     name: 'ERC721OutOfBoundsIndex',
   },
-  { type: 'error', inputs: [], name: 'Emptyciphertext' },
   {
     type: 'error',
     inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
@@ -2562,6 +2569,24 @@ export const invoiceHeroAbi = [
     name: 'OwnableUnauthorizedAccount',
   },
 ] as const
+
+/**
+ * - [__View Contract on Base Basescan__](https://basescan.org/address/0x74CDBb00562a6d4B3Ff5A8f83edDddB04352083e)
+ * -
+ */
+export const invoiceHeroAddress = {
+  8453: '0x74CDBb00562a6d4B3Ff5A8f83edDddB04352083e',
+  31337: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+} as const
+
+/**
+ * - [__View Contract on Base Basescan__](https://basescan.org/address/0x74CDBb00562a6d4B3Ff5A8f83edDddB04352083e)
+ * -
+ */
+export const invoiceHeroConfig = {
+  address: invoiceHeroAddress,
+  abi: invoiceHeroAbi,
+} as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Math

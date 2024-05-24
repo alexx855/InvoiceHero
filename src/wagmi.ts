@@ -1,17 +1,27 @@
+import type { Chain, HttpTransport } from 'viem';
 import { http, createConfig } from 'wagmi'
 import { base, foundry } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
 
+const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+
+let chains: [Chain, ...Chain[]] = [base];
+let transports: Record<number, HttpTransport> = {
+  [base.id]: http(),
+};
+
+if (!isProduction) {
+  chains.push(foundry);
+  transports[foundry.id] = http();
+}
+
 export const config = createConfig({
-  chains: [base, foundry],
+  chains,
   connectors: [
     injected(),
   ],
   ssr: true,
-  transports: {
-    [base.id]: http(),
-    [foundry.id]: http(),
-  },
+  transports: transports
 })
 
 declare module 'wagmi' {

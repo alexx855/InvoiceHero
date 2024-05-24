@@ -2188,7 +2188,10 @@ export const invoiceHeroAbi = [
   },
   {
     type: 'function',
-    inputs: [],
+    inputs: [
+      { name: 'ciphertext', internalType: 'bytes', type: 'bytes' },
+      { name: 'dataHash', internalType: 'bytes', type: 'bytes' },
+    ],
     name: 'createInvoice',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'nonpayable',
@@ -2212,16 +2215,9 @@ export const invoiceHeroAbi = [
     inputs: [{ name: 'tokenId', internalType: 'uint256', type: 'uint256' }],
     name: 'getInvoiceData',
     outputs: [
-      { name: '', internalType: 'string', type: 'string' },
-      { name: '', internalType: 'string', type: 'string' },
+      { name: '', internalType: 'bytes', type: 'bytes' },
+      { name: '', internalType: 'bytes', type: 'bytes' },
     ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
-    inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
-    name: 'getInvoicesByOwner',
-    outputs: [{ name: '', internalType: 'uint256[]', type: 'uint256[]' }],
     stateMutability: 'view',
   },
   {
@@ -2558,6 +2554,7 @@ export const invoiceHeroAbi = [
     ],
     name: 'ERC721OutOfBoundsIndex',
   },
+  { type: 'error', inputs: [], name: 'Emptyciphertext' },
   {
     type: 'error',
     inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],

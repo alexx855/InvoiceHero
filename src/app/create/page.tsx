@@ -1,3 +1,4 @@
+import Account from "@/components/Account"
 import { InvoiceForm } from "@/components/InvoiceForm"
 import { Menu } from "@/components/Menu"
 import background from '@/app/assets/bg1.jpg'

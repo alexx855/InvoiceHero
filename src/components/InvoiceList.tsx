@@ -25,7 +25,6 @@ export function InvoiceList() {
 
   // create mock invoices for now
   useEffect(() => {
-    console.log('data', data)
     if (data) {
       const invoices = [...Array(Number(data))].map((_, i) => ({
         ...INVOICE_MOCK,

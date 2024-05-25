@@ -1,21 +1,33 @@
 'use client'
 
 import { INVOICE_MOCK, ITEM_MOCK } from "@/constants";
+import { invoiceHeroConfig } from "@/generated";
 import { InvoiceData, InvoiceDataItems, InvoiceStatus, formatAmount } from "@/invoice";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId, useWriteContract } from "wagmi";
 
 const IS_DEV = process.env.NODE_ENV === 'development'
-
+invoiceHeroConfig
 export function InvoiceForm({
   invoice = INVOICE_MOCK,
 }: {
   invoice?: InvoiceData,
 }) {
   const { isConnected } = useAccount()
+  const chainId = useChainId()
+  const { data: hash, writeContract, error } = useWriteContract()
 
-  const formRef = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    if (error && error.message && error.message.length > 0)
+      toast(error.message)
+  }, [error])
+
+  useEffect(() => {
+    if (hash && hash.length > 0)
+      toast(hash)
+  }, [hash])
+
   const [items, setItems] = useState<InvoiceDataItems[]>(
     invoice.items || [ITEM_MOCK]
   )
@@ -46,10 +58,12 @@ export function InvoiceForm({
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!formRef.current || !isConnected) return
+    if (!isConnected) {
+      return toast('Please sign in to save the invoice.')
+    }
 
     // Get form data
-    const formData = new FormData(formRef.current);
+    const formData = new FormData(e.currentTarget);
     const formValues: Record<string, string> = {};
     formData.forEach((value, key) => {
       formValues[key] = value.toString();
@@ -69,17 +83,34 @@ export function InvoiceForm({
       due_date: formValues['due_date'] || '',
       customer_notes: formValues['customer_notes'] || ''
     }
+    console.log('Saving invoice with data:', invoiceData)
 
-    // Encrypt all invoice data 
-    // const invoiceId = await createInvoice(invoiceData)
-    const invoiceId = 123;
-    toast('Invoice created', {
-      action: {
-        label: 'View invoice',
-        onClick: () => { console.log('View invoice', invoiceId) }
-      },
-      duration: 5000
-    })
+    function encryptData(data: InvoiceData) {
+      return 'b'
+    }
+
+    function generateDataHash(data: InvoiceData) {
+      return 'a'
+    }
+
+    // TODO: Encrypt all invoice data 
+    const encryptedData = encryptData(invoiceData);
+    const dataHash = generateDataHash(invoiceData);
+
+    try {
+      writeContract({
+        chainId,
+        address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
+        abi: invoiceHeroConfig.abi,
+        functionName: 'createInvoice',
+        // args: [encryptedData, dataHash]
+      })
+
+    } catch (error) {
+      console.error(error)
+      toast('Failed to save invoice')
+    }
+
   }
 
   const squares = [
@@ -265,11 +296,15 @@ export function InvoiceForm({
 
           </div>
         </div>
-        {!isConnected ? (
-          <span className="font-medium w-full flex justify-center">Please sign in to save the invoice.</span>
-        ) : (
-          <span className="font-medium w-full flex justify-center">This invoice will be saved to your account, would cost you a small fee, to store it on the blockchain forever.</span>
-        )}
-      </form></div>
+        {
+          !isConnected ? (
+            <span className="font-medium w-full flex justify-center">Please sign in to save the invoice.</span>
+          ) : (
+            <span className="font-medium w-full flex justify-center">This invoice will be saved to your account, would cost you a small fee, to store it on the blockchain forever.</span>
+          )
+        }
+      </form ></div >
   )
 }
+
+

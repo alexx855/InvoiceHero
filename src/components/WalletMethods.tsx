@@ -36,7 +36,8 @@ const WalletMethods = ({ authWithEthWallet, setView }: WalletMethodsProps) => {
                 <Image
                   src="/metamask.png"
                   alt="MetaMask logo"
-                  fill={true}
+                  width={24}
+                  height={24}
                 ></Image>
               </div>
             )}
@@ -45,7 +46,8 @@ const WalletMethods = ({ authWithEthWallet, setView }: WalletMethodsProps) => {
                 <Image
                   src="/coinbase.png"
                   alt="Coinbase logo"
-                  fill={true}
+                  width={24}
+                  height={24}
                 ></Image>
               </div>
             )}

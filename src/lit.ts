@@ -161,7 +161,9 @@ export async function getSessionSigs({
   authMethod: AuthMethod;
   sessionSigsParams: GetSessionSigsProps;
 }): Promise<SessionSigs> {
+  console.log('getSessionSigs', litAuthClient);
   const provider = getProviderByAuthMethod(litAuthClient, authMethod);
+  console.log('getSessionSigs provider: ', provider);
   if (provider) {
     const sessionSigs = await provider.getSessionSigs({
       pkpPublicKey,
@@ -236,6 +238,10 @@ export async function mintPKP(litAuthClient: LitAuthClient, authMethod: AuthMeth
  * Get provider for given auth method
  */
 function getProviderByAuthMethod(litAuthClient: LitAuthClient, authMethod: AuthMethod) {
+  if (!litAuthClient) {
+    throw new Error('Lit auth client not found');
+  }
+  console.log('getProviderByAuthMethod authMethod: ', authMethod.authMethodType);
   switch (authMethod.authMethodType) {
     case AuthMethodType.GoogleJwt:
       return litAuthClient.getProvider(ProviderType.Google);

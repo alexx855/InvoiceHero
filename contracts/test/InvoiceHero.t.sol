@@ -2,9 +2,8 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-
-import {InvoiceHero} from "../src/InvoiceHero.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import {InvoiceHero} from "../src/InvoiceHero.sol";
 
 contract InvoiceHeroTest is Test {
     InvoiceHero public invoiceHero;
@@ -15,7 +14,7 @@ contract InvoiceHeroTest is Test {
         emit log_address(address(invoiceHero));
     }
 
-    function createInvoice(address ownerAddress) public {
+    function createTestInvoiceToAddress(address ownerAddress) public {
         vm.prank(ownerAddress);
         bytes memory encryptedData = "encryptedData";
         bytes memory encryptedKey = "encryptedKey";
@@ -25,7 +24,7 @@ contract InvoiceHeroTest is Test {
     function testMint() public {
         // mint invoiceHero to owner
         address owner = vm.addr(1);
-        createInvoice(owner);
+        createTestInvoiceToAddress(owner);
         uint256 balance = invoiceHero.balanceOf(owner);
         emit log_string("Balance: ");
         emit log_uint(balance);
@@ -41,7 +40,7 @@ contract InvoiceHeroTest is Test {
         // mint invoiceHero to owner
         address owner = vm.addr(1);
         address receiver = vm.addr(2);
-        createInvoice(owner);
+        createTestInvoiceToAddress(owner);
         assertEq(invoiceHero.balanceOf(owner), 1, "Token was not minted correctly");
         uint256 tokenId = invoiceHero.tokenOfOwnerByIndex(owner, 0);
         emit log_string("Token ID: ");
@@ -57,7 +56,7 @@ contract InvoiceHeroTest is Test {
 
     function testData() public {
         address owner = vm.addr(1);
-        createInvoice(owner);
+        createTestInvoiceToAddress(owner);
         uint256 tokenId = invoiceHero.tokenOfOwnerByIndex(owner, 0);
         // emulate owner
         vm.prank(owner);
@@ -72,7 +71,7 @@ contract InvoiceHeroTest is Test {
 
     function testMetadata() public {
         address owner = vm.addr(1);
-        createInvoice(owner);
+        createTestInvoiceToAddress(owner);
         uint256 tokenId = invoiceHero.tokenOfOwnerByIndex(owner, 0);
         string memory tokenURI = invoiceHero.tokenURI(tokenId);
         string memory baseURI = invoiceHero.getBaseInvoiceURI();
@@ -89,7 +88,7 @@ contract InvoiceHeroTest is Test {
     function testTransferToken() public {
         address bob = vm.addr(1);
         // mint the token to bob's address
-        createInvoice(bob);
+        createTestInvoiceToAddress(bob);
 
         // emulate bob
         vm.startPrank(bob);
@@ -106,11 +105,47 @@ contract InvoiceHeroTest is Test {
     // only the owner can burn
     function testBurn() public {
         address owner = vm.addr(1);
-        createInvoice(owner);
+        createTestInvoiceToAddress(owner);
         assertEq(invoiceHero.balanceOf(owner), 1, "Token was not minted correctly");
         uint256 tokenId = invoiceHero.tokenOfOwnerByIndex(owner, 0);
         vm.prank(owner);
         invoiceHero.burn(tokenId);
         assertEq(invoiceHero.balanceOf(owner), 0, "Token was not burned correctly");
     }
+
+   function testOwner() public {
+        address expectedOwner = address(this);
+        address contractOwner = invoiceHero.owner();
+        assertEq(contractOwner, expectedOwner, "Owner is not correct");
+    }
+
+    function testNonOwnerTransfer() public {
+        address bob = vm.addr(1);
+        address alice = vm.addr(2);
+        createTestInvoiceToAddress(bob);
+        uint256 tokenId = invoiceHero.tokenOfOwnerByIndex(bob, 0);
+        vm.expectRevert();
+        vm.prank(alice);
+        invoiceHero.safeTransferFrom(bob, alice, tokenId);
+    }
+
+    function testNonOwnerBurn() public {
+        address owner = vm.addr(1);
+        createTestInvoiceToAddress(owner);
+        uint256 tokenId = invoiceHero.tokenOfOwnerByIndex(owner, 0);
+        vm.expectRevert();
+        vm.prank(vm.addr(2));
+        invoiceHero.burn(tokenId);
+    }
+
+    function testGetInvoicesByOwner () public {
+        address owner = vm.addr(1);
+        createTestInvoiceToAddress(owner);
+        createTestInvoiceToAddress(owner);
+        uint256[] memory tokenIds = invoiceHero.getInvoicesByOwner(owner);
+        assertEq(tokenIds.length, 2, "Wrong number of tokens");
+        assertEq(tokenIds[0], 0, "Wrong token ID");
+        assertEq(tokenIds[1], 1, "Wrong token ID");
+    }
+
 }

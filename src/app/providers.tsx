@@ -12,7 +12,7 @@ import { LitNetwork } from "@lit-protocol/constants";
 const litClientConfig: LitNodeClientConfig = {
   alertWhenUnauthorized: false,
   litNetwork: LitNetwork.Cayenne,
-  debug: true,
+  debug: false,
 };
 
 export function Providers(props: { children: ReactNode }) {

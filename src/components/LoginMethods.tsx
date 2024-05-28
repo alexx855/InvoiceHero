@@ -10,18 +10,13 @@ interface LoginProps {
   handleGoogleLogin: () => Promise<void>;
   handleDiscordLogin: () => Promise<void>;
   authWithEthWallet: any;
-  authWithWebAuthn: any;
-  signUp: any;
   error?: Error;
 }
-
 
 export default function LoginMethods({
   handleGoogleLogin,
   handleDiscordLogin,
   authWithEthWallet,
-  authWithWebAuthn,
-  signUp,
   error,
 }: LoginProps) {
   const [view, setView] = useState<AuthView>('default');
@@ -43,23 +38,11 @@ export default function LoginMethods({
               handleDiscordLogin={handleDiscordLogin}
               setView={setView}
             />
-            <div className="buttons-container">
-              <button type="button" className="btn btn--link" onClick={signUp}>
-                Need an account? Sign up
-              </button>
-            </div>
           </>
         )}
         {view === 'wallet' && (
           <WalletMethods
             authWithEthWallet={authWithEthWallet}
-            setView={setView}
-          />
-        )}
-        {view === 'webauthn' && (
-          <WebAuthn
-            start={'authenticate'}
-            authWithWebAuthn={authWithWebAuthn}
             setView={setView}
           />
         )}

@@ -2,21 +2,43 @@
 
 import { INVOICE_MOCK, ITEM_MOCK } from "@/constants";
 import { invoiceHeroConfig } from "@/generated";
+import { useLit } from "@/hooks/useLit";
 import { InvoiceData, InvoiceDataItems, InvoiceStatus, formatAmount } from "@/invoice";
+import { encryptString } from "@lit-protocol/lit-node-client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAccount, useChainId, useWriteContract } from "wagmi";
+import { fromHex, stringToHex } from 'viem'
+import Link from "next/link";
+import { simulateContract } from '@wagmi/core'
+import { config } from "@/wagmi";
+import { useRouter } from "next/navigation";
 
-const IS_DEV = process.env.NODE_ENV === 'development'
-invoiceHeroConfig
+const IS_DEV = process.env.NEXT_PUBLIC_VERCEL_ENV !== 'production'
+
 export function InvoiceForm({
   invoice = INVOICE_MOCK,
 }: {
   invoice?: InvoiceData,
 }) {
-  const { isConnected } = useAccount()
+  const { address, isConnected } = useAccount()
   const chainId = useChainId()
   const { data: hash, writeContract, error } = useWriteContract()
+  const { litNodeClient } = useLit();
+  const router = useRouter()
+  const accs = [
+    {
+      contractAddress: "",
+      standardContractType: "",
+      chain: "base",
+      method: "",
+      parameters: [":userAddress"],
+      returnValueTest: {
+        comparator: "=",
+        value: address,
+      },
+    },
+  ];
 
   useEffect(() => {
     if (error && error.message && error.message.length > 0)
@@ -61,6 +83,9 @@ export function InvoiceForm({
     if (!isConnected) {
       return toast('Please sign in to save the invoice.')
     }
+    if (!litNodeClient) {
+      return toast('Lit node client not found')
+    }
 
     // Get form data
     const formData = new FormData(e.currentTarget);
@@ -85,30 +110,49 @@ export function InvoiceForm({
     }
     console.log('Saving invoice with data:', invoiceData)
 
-    function encryptData(data: InvoiceData) {
-      return 'b'
-    }
-
-    function generateDataHash(data: InvoiceData) {
-      return 'a'
-    }
-
-    // TODO: Encrypt all invoice data 
-    const encryptedData = encryptData(invoiceData);
-    const dataHash = generateDataHash(invoiceData);
-
     try {
-      writeContract({
-        chainId,
+      // -- encrypt string
+      const encryptRes = await encryptString(
+        {
+          accessControlConditions: accs,
+          dataToEncrypt: JSON.stringify(invoiceData),
+        },
+        litNodeClient
+      );
+
+      console.log("✅ encryptRes:", encryptRes);
+      // writeContract({
+      //   chainId,
+      //   address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
+      //   abi: invoiceHeroConfig.abi,
+      //   functionName: 'createInvoice',
+      //   args: [stringToHex('helloWorld'), stringToHex('helloWorld')]
+      // })
+      console.log(stringToHex(encryptRes.ciphertext))
+      console.log(stringToHex(encryptRes.dataToEncryptHash))
+
+      const result = await simulateContract(config, {
+        // chainId,
         address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
         abi: invoiceHeroConfig.abi,
         functionName: 'createInvoice',
-        // args: [encryptedData, dataHash]
+        args: [stringToHex('helloWorld'), stringToHex('helloWorld')],
+        account: address
+      })
+      console.log(result)
+
+      writeContract({
+        address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
+        abi: invoiceHeroConfig.abi,
+        functionName: 'createInvoice',
+        args: [stringToHex('helloWorld'), stringToHex('helloWorld')],
+        account: address
       })
 
-    } catch (error) {
-      console.error(error)
-      toast('Failed to save invoice')
+
+    } catch (err) {
+      console.error(err);
+      toast.error((err as Error)?.message || 'Failed to encrypt message');
     }
 
   }

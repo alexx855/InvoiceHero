@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { AuthMethod } from '@lit-protocol/types';
 import { getPKPs, mintPKP } from '../lit';
 import { IRelayPKP } from '@lit-protocol/types';
-import { useLit } from './useLit';
+import { useLit } from '@/hooks/useLit';
 
 export default function useAccounts() {
   const [accounts, setAccounts] = useState<IRelayPKP[]>([]);
@@ -17,7 +17,6 @@ export default function useAccounts() {
   const fetchAccounts = useCallback(
     async (authMethod: AuthMethod): Promise<void> => {
       if (!litAuthClient) {
-        // throw new Error('Lit auth client not found');
         return;
       }
 
@@ -26,12 +25,13 @@ export default function useAccounts() {
       try {
         // Fetch PKPs tied to given auth method
         const myPKPs = await getPKPs(litAuthClient, authMethod);
-        // console.log('fetchAccounts pkps: ', myPKPs);
+        console.log('fetchAccounts pkps: ', myPKPs);
         setAccounts(myPKPs);
         // If only one PKP, set as current account
-        if (myPKPs.length === 1) {
           setCurrentAccount(myPKPs[0]);
-        }
+        // if (myPKPs.length === 1) {
+        //   setCurrentAccount(myPKPs[0]);
+        // }
       } catch (err) {
         console.error(err);
         setError(new Error('Failed to fetch accounts'));

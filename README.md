@@ -7,9 +7,8 @@ Generate professional invoices for free in seconds, unlock blockchain-powered se
 ## Features
 
 **PDF Downloads:**  High-quality, printable and downloadable invoices.
-[] TODO: **Secure Sharing:**  Share invoices via unique, private links.
-[] TODO: **Privacy and Security:** Lit Protocol encrypts your data and stores it on a decentralized network.
-[] TODO: **Crypto Payments:** Accept a wide range of cryptocurrencies through Squid Router.
+**Secure Sharing:**  TODO: Share invoices via unique, private links.
+**Privacy and Security:** Lit Protocol encrypts your data and stores it on a decentralized network.
 
 ## Why InvoiceHero?
 
@@ -35,12 +34,10 @@ Interested in contributing? feel free to fork the repository and submit a pull r
 1.  **Fork and clone the repository:**  `https://github.com/alexx855/InvoiceHero.git`
 2.  **Install dependencies:**  `pnpm install` 
 3.  **Install foundry:** docs: https://book.getfoundry.sh/getting-started/
-4.  **Start the local anvil blockachain:**  `anvil`
+4.  **Start the local anvil blockchain:**  `anvil`
 5.  **Deploy to anvil:** `pnpm run deploy:anvil`
-6.  **Copy the contract address from the terminal and paste it in the .env.local file:** `NEXT_PUBLIC_FOUNDRY_CONTRACT_ADDRESS=0x...`
-7.  **Start the development server:** `pnpm run dev`
-8.  **Open your browser:**  `http://localhost:3001`
+6.  **Generate wagmi deployment for anvil:** `NEXT_PUBLIC_ANVIL_CONTRACT_ADDRESS=0x... npx wagm
+i generate --watch`
+1.  **Start the development server:** `pnpm run dev`
+2.  **Open your browser:**  `http://localhost:3001`
 
-## License
-
-MIT License

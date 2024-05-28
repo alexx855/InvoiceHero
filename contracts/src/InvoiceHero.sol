@@ -18,10 +18,8 @@ contract InvoiceHero is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnab
 
     mapping(uint256 => bytes) private _cipherText;
     mapping(uint256 => bytes) private _dataHash;
-    constructor()
-        ERC721("LitInvoice", "LINV")
-        Ownable(msg.sender) 
-    {}
+
+    constructor() ERC721("InvoiceHero", "INVH") Ownable(msg.sender) {}
 
     function setBaseURI(string memory baseURI) public onlyOwner {
         _baseInvoiceURI = baseURI;
@@ -35,12 +33,12 @@ contract InvoiceHero is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnab
         return ownerOf(tokenId);
     }
 
-    function getInvoiceData(uint256 tokenId) public view returns  (bytes memory, bytes memory) {
+    function getInvoiceData(uint256 tokenId) public view returns (bytes memory, bytes memory) {
         return (_cipherText[tokenId], _dataHash[tokenId]);
     }
 
     // store the encrypted data for tokenId
-     function _setTokenCipherText(uint256 tokenId, bytes memory ciphertext) internal {
+    function _setTokenCipherText(uint256 tokenId, bytes memory ciphertext) internal {
         _cipherText[tokenId] = ciphertext;
     }
 
@@ -48,7 +46,6 @@ contract InvoiceHero is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnab
     function _setTokenDataHash(uint256 tokenId, bytes memory dataHash) internal {
         _dataHash[tokenId] = dataHash;
     }
-
     // create new invoice with encrypted data
     function createInvoice(bytes memory ciphertext, bytes memory dataHash) public returns (uint256) {
         if (ciphertext.length == 0 || dataHash.length == 0) {
@@ -65,6 +62,7 @@ contract InvoiceHero is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnab
 
         emit InvoiceCreated(msg.sender, tokenId);
 
+        // return the tokenId so the caller can query it later from the event logs
         return tokenId;
     }
 
@@ -77,19 +75,11 @@ contract InvoiceHero is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnab
         return super._update(to, tokenId, auth);
     }
 
-    function _increaseBalance(address account, uint128 value)
-        internal
-        override(ERC721, ERC721Enumerable)
-    {
+    function _increaseBalance(address account, uint128 value) internal override(ERC721, ERC721Enumerable) {
         super._increaseBalance(account, value);
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
+    function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
         return super.tokenURI(tokenId);
     }
 
@@ -100,5 +90,22 @@ contract InvoiceHero is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnab
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
+    }
+
+    function getInvoicesByOwner(address owner) public view returns (uint256[] memory) {
+        uint256 tokenCount = balanceOf(owner);
+
+        if (tokenCount == 0) {
+            // Return an empty array
+            return new uint256[](0);
+        } else {
+            uint256[] memory result = new uint256[](tokenCount);
+
+            for (uint256 i = 0; i < tokenCount; i++) {
+                result[i] = tokenOfOwnerByIndex(owner, i);
+            }
+
+            return result;
+        }
     }
 }

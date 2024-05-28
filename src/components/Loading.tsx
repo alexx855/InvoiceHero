@@ -1,7 +1,22 @@
-export function Loading() {
+interface LoadingProps {
+  copy?: string;
+  error?: Error;
+}
+
+export default function Loading({ copy, error }: LoadingProps) {
   return (
-    <div className="px-3 h-2 py-1 text-xs font-medium leading-none text-center text-blue-800 bg-gray-50 rounded-full animate-pulse">
-      <span className="sr-only"> Loading...</span>
+    <div className="container">
+      <div className="wrapper">
+        {error && (
+          <div className="alert alert--error">
+            <p>{error.message}</p>
+          </div>
+        )}
+        <div className="loader-container">
+          <div className="loader"></div>
+          <p>{copy}</p>
+        </div>
+      </div>
     </div>
-  )
+  );
 }

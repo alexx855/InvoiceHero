@@ -14,6 +14,7 @@ import { useConnect } from 'wagmi';
 import { useLit } from '@/hooks/useLit';
 import { config } from '@/wagmi';
 import { getEthersSigner } from '@/ethers';
+import { toast } from 'sonner';
 
 export default function useAuthenticate(redirectUri?: string) {
   const { litAuthClient } = useLit();
@@ -41,7 +42,7 @@ export default function useAuthenticate(redirectUri?: string) {
       setAuthMethod(result);
     } catch (err) {
       console.error(err);
-      // setError(new Error('Failed to authenticate with Google'));
+      toast.error('Failed to authenticate with Google');
     } finally {
       setLoading(false);
     }
@@ -66,7 +67,7 @@ export default function useAuthenticate(redirectUri?: string) {
       setAuthMethod(result);
     } catch (err) {
       console.error(err);
-      // setError(new Error('Failed to authenticate with Discord'));
+      toast.error('Failed to authenticate with Discord');
     } finally {
       setLoading(false);
     }
@@ -102,7 +103,7 @@ export default function useAuthenticate(redirectUri?: string) {
         setAuthMethod(result);
       } catch (err) {
         console.error(err);
-        // setError(err);
+        toast.error('Failed to authenticate with Ethereum wallet');
       } finally {
         setLoading(false);
       }
@@ -110,29 +111,6 @@ export default function useAuthenticate(redirectUri?: string) {
     [litAuthClient, connectAsync]
   );
 
-  /**
-   * Authenticate with WebAuthn credential
-   */
-  const authWithWebAuthn = useCallback(
-    async (username?: string): Promise<void> => {
-      setLoading(true);
-      // setError(undefined);
-      setAuthMethod(undefined);
-      if (!litAuthClient) {
-        return;
-      }
-      try {
-        const result = await authenticateWithWebAuthn(litAuthClient);
-        setAuthMethod(result);
-      } catch (err) {
-        console.error(err);
-        // setError(err);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [litAuthClient]
-  );
 
   useEffect(() => {
     // Check if user is redirected from social login
@@ -149,7 +127,6 @@ export default function useAuthenticate(redirectUri?: string) {
 
   return {
     authWithEthWallet,
-    authWithWebAuthn,
     authMethod,
     loading,
     error,

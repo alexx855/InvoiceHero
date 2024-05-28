@@ -174,7 +174,7 @@ export function InvoiceForm({
           style={{ ...square.style, animationDelay: `calc(-1s * ${square.id})` }}
         ></div>
       ))}
-      <form ref={formRef} onSubmit={handleFormSubmit} className="max-w-12xl mx-4  md:mx-0 px-8 py-10 md:ml-20 text-gray-200 bg-white-600 rounded-3xl bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-100 border border-[#9861c4]">
+      <form onSubmit={handleFormSubmit} className="max-w-12xl mx-4  md:mx-0 px-8 py-10 md:ml-20 text-gray-200 bg-white-600 rounded-3xl bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-100 border border-[#9861c4]">
         <div className='flex w-full sm:space-x-4 sm:flex-row flex-col justify-between'>
 
           <div className="mb-6">

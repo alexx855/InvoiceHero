@@ -2,13 +2,12 @@
 
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Generate professional invoices for free in seconds, unlock blockchain-powered security and crypto payments. Perfect for freelancers, entrepreneurs, and businesses of all sizes!
+Generate professional invoices for free in seconds, unlock blockchain-powered security. Perfect for freelancers, entrepreneurs, and businesses of all sizes!
 
 ## Features
 
-**PDF Downloads:**  High-quality, printable and downloadable invoices.
-**Secure Sharing:**  TODO: Share invoices via unique, private links.
 **Privacy and Security:** Lit Protocol encrypts your data and stores it on a decentralized network.
+**PDF Downloads:**  High-quality, printable and downloadable invoices.
 
 ## Why InvoiceHero?
 
@@ -19,7 +18,7 @@ Generate professional invoices for free in seconds, unlock blockchain-powered se
 
 *   **Frontend:** React, Next.js, Viem, Wagmi
 *   **Backend:** Solidity, Node.js, browserless/chromium (headless browser)
-*   **Web3:** Lit Protocol, Squid Router, Fleek (decentralized hosting)
+*   **Web3:** Lit Protocol, Fleek (decentralized hosting)
 
 ## Get Started
 

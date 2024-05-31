@@ -13,7 +13,6 @@ import Link from "next/link";
 import { simulateContract } from '@wagmi/core'
 import { config } from "@/wagmi";
 import { useRouter } from "next/navigation";
-import Background from "@/components/Background";
 
 const IS_DEV = process.env.NEXT_PUBLIC_VERCEL_ENV !== 'production'
 
@@ -48,7 +47,15 @@ export function InvoiceForm({
 
   useEffect(() => {
     if (hash && hash.length > 0)
-      toast(hash)
+      toast.success(`Invoice saved successfully`, {
+        action: {
+          label: 'View explorer',
+          onClick: () => {
+            window.open(`https://basescan.org/tx/${hash}`, '_blank')
+          }
+        },
+        duration: 10000
+      })
   }, [hash])
 
   const [items, setItems] = useState<InvoiceDataItems[]>(
@@ -109,7 +116,6 @@ export function InvoiceForm({
       due_date: formValues['due_date'] || '',
       customer_notes: formValues['customer_notes'] || ''
     }
-    console.log('Saving invoice with data:', invoiceData)
 
     try {
       // -- encrypt string
@@ -133,7 +139,6 @@ export function InvoiceForm({
       console.log(stringToHex(encryptRes.dataToEncryptHash))
 
       const result = await simulateContract(config, {
-        // chainId,
         address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
         abi: invoiceHeroConfig.abi,
         functionName: 'createInvoice',
@@ -149,7 +154,6 @@ export function InvoiceForm({
         args: [stringToHex('helloWorld'), stringToHex('helloWorld')],
         account: address
       })
-
 
     } catch (err) {
       console.error(err);

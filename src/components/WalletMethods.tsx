@@ -17,22 +17,21 @@ const WalletMethods = ({ authWithEthWallet, setView }: WalletMethodsProps) => {
 
   return (
     <>
-      <h1>Connect your web3 wallet</h1>
-      <p>
+      <h1 className="text-2xl font-bold mb-4">Connect your web3 wallet</h1>
+      <p className="mb-4">
         Connect your wallet then sign a message to verify you&apos;re the owner
         of the address.
       </p>
-      <div className="buttons-container">
+      <div className="flex flex-col space-y-4">
         {connectors.map(connector => (
           <button
             type="button"
-            className="btn btn--outline"
-            // disabled={!connector.ready}
+            className="flex items-center justify-between px-4 py-2 border border-gray-300 rounded"
             key={connector.id}
             onClick={() => authWithEthWallet({ connector })}
           >
             {connector.name.toLowerCase() === 'metamask' && (
-              <div className="btn__icon">
+              <div className="mr-2">
                 <Image
                   src="/metamask.png"
                   alt="MetaMask logo"
@@ -42,7 +41,7 @@ const WalletMethods = ({ authWithEthWallet, setView }: WalletMethodsProps) => {
               </div>
             )}
             {connector.name.toLowerCase() === 'coinbase wallet' && (
-              <div className="btn__icon">
+              <div className="mr-2">
                 <Image
                   src="/coinbase.png"
                   alt="Coinbase logo"
@@ -51,10 +50,10 @@ const WalletMethods = ({ authWithEthWallet, setView }: WalletMethodsProps) => {
                 ></Image>
               </div>
             )}
-            <span className="btn__label">Continue with {connector.name}</span>
+            <span>Continue with {connector.name}</span>
           </button>
         ))}
-        <button onClick={() => setView('default')} className="btn btn--link">
+        <button onClick={() => setView('default')} className="text-blue-500">
           Back
         </button>
       </div>

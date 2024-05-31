@@ -12,6 +12,7 @@ import { useLit } from '../hooks/useLit';
 import { ORIGIN, signInWithDiscord, signInWithGoogle } from '@/lit';
 import Loading from './Loading';
 import { useRouter } from 'next/navigation';
+import { useAccount } from 'wagmi';
 
 export default function Login() {
   const redirectUri = ORIGIN + '/login';
@@ -38,6 +39,16 @@ export default function Login() {
     error: sessionError,
   } = useSession();
   const router = useRouter();
+  const account = useAccount()
+
+  useEffect(() => {
+    console.log('account: ', account);
+    console.log(account.status);
+    // handle disconnect
+    if (account.status === 'disconnected') {
+
+    }
+  }, [account, router])
 
   const error = authError || accountsError || sessionError;
 
@@ -85,14 +96,14 @@ export default function Login() {
   }
 
   // If user is authenticated and has selected an account, initialize session
-  if (currentAccount && sessionSigs) {
+  if (account.status === 'connected' && currentAccount && sessionSigs) {
     return (
       <Dashboard currentAccount={currentAccount} sessionSigs={sessionSigs} />
     );
   }
 
   // If user is authenticated and has more than 1 account, show account selection
-  if (authMethod && accounts.length > 0) {
+  if (account.status === 'connected' && authMethod && accounts.length > 0) {
     return (
       <AccountSelection
         accounts={accounts}

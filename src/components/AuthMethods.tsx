@@ -16,7 +16,8 @@ const AuthMethods = ({
     <ul className="flex flex-col items-stretch space-y-4 max-w-[250px] m-auto">
       <li>
         <button
-          className="flex justify-between items-center w-full py-2 px-5 text-white bg-[#9861c4] rounded-full focus:opacity-80"
+          disabled
+          className=" opacity-50 flex justify-between items-center w-full py-2 px-5 text-white bg-[#9861c4] rounded-full focus:opacity-80"
           type="button"
           title='Sign in with Google'
           onClick={handleGoogleLogin}
@@ -27,7 +28,8 @@ const AuthMethods = ({
       </li>
       <li>
         <button
-          className="flex justify-between items-center w-full py-2 px-5 text-white bg-[#9861c4] rounded-full focus:opacity-80"
+          disabled
+          className=" opacity-50 flex justify-between items-center w-full py-2 px-5 text-white bg-[#9861c4] rounded-full focus:opacity-80"
           type="button"
           title='Sign in with Discord'
           onClick={handleDiscordLogin}

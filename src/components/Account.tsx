@@ -1,20 +1,34 @@
 'use client'
 
-import { config } from '@/wagmi'
-import { useAccount, useConnect, useDisconnect, useBalance, useSwitchChain } from 'wagmi'
-import { formatUnits } from 'viem'
+import { useAccount, useDisconnect, useSwitchChain } from 'wagmi'
 import useAccounts from '@/hooks/useAccounts'
-import useAuthenticate from '@/hooks/useAuthenticate'
+import { useRouter } from 'next/navigation'
+import useSession from '@/hooks/useSession';
 
 function Account() {
+  const {
+    fetchAccounts,
+    setCurrentAccount,
+    currentAccount,
+    accounts,
+    loading: accountsLoading,
+    error: accountsError,
+  } = useAccounts();
+  const {
+    initSession,
+    sessionSigs,
+    loading: sessionLoading,
+    error: sessionError,
+  } = useSession();
+
   const account = useAccount()
-  const { currentAccount, loading, error } = useAccounts()
-  // const { connectors, connect, status, error } = useConnect()
   const { disconnectAsync } = useDisconnect()
+  // const { connectors, connect, status, error } = useConnect()
   // const { data } = useBalance({
   //   address: account.address,
   //   config
   // })
+  const router = useRouter()
   const { chains, switchChain, isPending } = useSwitchChain()
 
   const logout = async () => {
@@ -22,16 +36,14 @@ function Account() {
       await disconnectAsync();
     } catch (err) { }
     localStorage.removeItem('lit-wallet-sig');
-    // router.push('/login');
+    router.push('/login');
   }
 
   return (
     <>
       <div>
-        <div>Status: {account.status}</div>
-        <div>Wagmi address: {account.address} </div>
-        {/* balance: {data && formatUnits(data?.value, 18)} */}
-        {account.status === 'connected' ? ( 
+        <span>{account.status}</span>
+        {account.status === 'connected' && ( 
           <div>
             {chains.map((chain) => {
               if (chain.id === account.chainId) {
@@ -52,22 +64,6 @@ function Account() {
             <button type="button" onClick={() => logout()}>
               Disconnect
             </button>
-
-          </div>
-        ) : (
-          <div>
-              {/* <h3>Connect</h3>
-            {connectors.map((connector) => (
-              <button
-                key={connector.uid}
-                onClick={() => connect({ connector })}
-                type="button"
-              >
-                {connector.name}
-              </button>
-            ))} */}
-              {/* <div>{status}</div> */}
-            <div>{error?.message}</div>
           </div>
         )}
       </div>

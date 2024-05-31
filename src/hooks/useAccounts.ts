@@ -28,10 +28,9 @@ export default function useAccounts() {
         console.log('fetchAccounts pkps: ', myPKPs);
         setAccounts(myPKPs);
         // If only one PKP, set as current account
+        if (myPKPs.length === 1) {
           setCurrentAccount(myPKPs[0]);
-        // if (myPKPs.length === 1) {
-        //   setCurrentAccount(myPKPs[0]);
-        // }
+        }
       } catch (err) {
         console.error(err);
         setError(new Error('Failed to fetch accounts'));

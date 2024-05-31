@@ -13,34 +13,37 @@ const AuthMethods = ({
   setView,
 }: AuthMethodsProps) => {
   return (
-    <>
-      <div >
-        <div >
-          <button
-            type="button"
-            title='Sign in with Google'
-            onClick={handleGoogleLogin}
-          >
-            Sign in with Google
-            <Image src="/google.png" width={24} height={24} alt="Google logo" />
-          </button>
-          <button
-            type="button"
-            title='Sign in with Discord'
-            onClick={handleDiscordLogin}
-          >
-            Sign in with Discord
-            <Image src="/discord.png" width={24} height={24} alt="Discord logo" />
-          </button>
-
-        </div>
-
+    <ul className="flex flex-col items-stretch space-y-4 max-w-[250px] m-auto">
+      <li>
         <button
+          className="flex justify-between items-center w-full py-2 px-5 text-white bg-[#9861c4] rounded-full focus:opacity-80"
+          type="button"
+          title='Sign in with Google'
+          onClick={handleGoogleLogin}
+        >
+          Sign in with Google
+          <Image src="/google.png" width={24} height={24} alt="Google logo" />
+        </button>
+      </li>
+      <li>
+        <button
+          className="flex justify-between items-center w-full py-2 px-5 text-white bg-[#9861c4] rounded-full focus:opacity-80"
+          type="button"
+          title='Sign in with Discord'
+          onClick={handleDiscordLogin}
+        >
+          Sign in with Discord
+          <Image src="/discord.png" width={24} height={24} alt="Discord logo" />
+        </button>
+      </li>
+      <li>
+        <button
+          className="flex justify-between items-center w-full py-2 px-5 text-white bg-[#9861c4] rounded-full focus:opacity-80"
           type="button"
           title='Sign in with wallet'
           onClick={() => setView('wallet')}
         >
-          Sign in with wallet
+          Sign in with Wallet
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -57,8 +60,8 @@ const AuthMethods = ({
             />
           </svg>
         </button>
-      </div>
-    </>
+      </li>
+    </ul>
   );
 };
 

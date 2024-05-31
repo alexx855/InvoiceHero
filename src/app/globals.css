@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  color: #fff;
+  background: #000;
+}
+
+a {
+  color: #fff;
+  border-bottom: 1px solid #fff;
+}
+
+a:hover {
+  color: #fff;
+  border-bottom: 1px solid #9861c4;
+}
 .square {
   @apply absolute bg-white bg-opacity-10 border border-[#9861c4] border-opacity-15 rounded-xl;
   backdrop-filter: blur(5px);

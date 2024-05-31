@@ -31,8 +31,8 @@ export default function LoginMethods({
         )}
         {view === 'default' && (
           <>
-            <h1>Welcome back</h1>
-            <p>Access your Lit wallet.</p>
+            <h1 className='text-lg font-bold'>Welcome back</h1>
+            <p className='mb-4'>Access your account</p>
             <AuthMethods
               handleGoogleLogin={handleGoogleLogin}
               handleDiscordLogin={handleDiscordLogin}

@@ -7,7 +7,7 @@ import { DownloadInvoiceButton } from './DownloadInvoiceButton';
 import { DeleteInvoiceButton } from './DeleteInvoiceButton';
 import { Invoice, formatAmount, getInvoicesList } from '@/invoice';
 import { toast } from 'sonner';
-import { invoiceHeroConfig } from '@/generated';
+import { invoiceHeroAbi, invoiceHeroAddress, invoiceHeroConfig } from '@/generated';
 import { INVOICE_MOCK } from '@/constants';
 import useSession from '@/hooks/useSession';
 import { useLit } from '@/hooks/useLit';
@@ -16,6 +16,7 @@ import { LitAccessControlConditionResource, LitAbility, createSiweMessageWithRec
 import { decryptToString } from '@lit-protocol/lit-node-client';
 import { AuthCallbackParams } from '@lit-protocol/types';
 import { config } from '@/wagmi';
+import { readContract } from '@wagmi/core'
 
 export function InvoiceList() {
   const { address, isConnected } = useAccount()
@@ -31,15 +32,13 @@ export function InvoiceList() {
     functionName: 'balanceOf',
     args: [address!],
   })
-  console.log('data: ', data)
-  console.log('error: ', error)
-  console.log('address: ', address)
-  console.log('isLoading: ', isLoading)
+  // console.log('data: ', data)
+  // console.log('error: ', error)
+  // console.log('address: ', address)
+  // console.log('isLoading: ', isLoading)
 
   // create mock invoices for now
   useEffect(() => {
-
-
     async function getAndDecryptData() {
       //  && sessionSigs
       if (!address || !litNodeClient) {
@@ -62,9 +61,10 @@ export function InvoiceList() {
       try {
 
         const invoices: Invoice[] = []
-
-        if (!data || !sessionSigs) {
-          console.log('No invoices found for address', address)
+        console.log('data: ', data)
+        console.log('sessionSigs: ', sessionSigs)
+        if (!data) {
+          console.error('No invoices found for address', address)
           // toast.error(`No invoices found for address ${address}`)
           // setInvoices([])
           // setIsLoading(false)
@@ -72,12 +72,26 @@ export function InvoiceList() {
         }
 
         // Decrypt data
-
         const invoicesOwned = [...Array(Number(data))].map((_, i) => ({
           id: i.toString(),
         }))
 
+        console.log('invoicesOwned: ', invoicesOwned)
+
         for (let i = 0; i < invoicesOwned.length; i++) {
+          try {
+            const result = await readContract(config, {
+              abi: invoiceHeroConfig.abi,
+              address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
+              functionName: 'getInvoiceData',
+              args: [BigInt(i)],
+            })
+            console.log(result);
+
+          } catch (error) {
+            console.error(error)
+          }
+
           // TODO:
           // console.log('data[i].ciphertext: ', data[i].ciphertext)
           // console.log('data[i].dataHash: ', data[i].dataHash)
@@ -204,9 +218,9 @@ export function InvoiceList() {
   return (
     <>
       <div className="overflow-x-auto relative">
-        <div className="mb-6 relative bg-white shadow-md sm:rounded-lg overflow-hidden">
-          <table className="w-full m-0 text-sm text-left text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+        <div className="mb-6 relative  shadow-md sm:rounded-lg overflow-hidden">
+          <table className="w-full m-0 text-sm text-left ">
+            <thead className="text-xs  uppercase ">
               <tr>
                 <th scope="col" className="px-4 py-3">Invoice Number</th>
                 <th scope="col" className="px-4 py-3 text-right">Status</th>
@@ -223,7 +237,7 @@ export function InvoiceList() {
                 invoices.map((data, inv) =>
                 (
                   <tr key={data.id} className="border-b">
-                    <th scope="row" className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                    <th scope="row" className="px-4 py-3 font-medium  whitespace-nowrap">
                       <Link href={`/invoice/${data.id}`} className=" text-blue-600 hover:text-blue-700 hover:underline">
                         #{data.invoice_number}
                       </Link>
@@ -257,9 +271,9 @@ export function InvoiceList() {
               ) : (
                 <tr className="border-b">
                     <td colSpan={6} className="px-4 py-3">
-                    {!isConnected && <p className='mt-2'>Please connect your wallet to view your invoices</p>}
-                      {isConnected && !invoices.length && <p className='mt-2'>No invoices found</p>}
-                      {isConnected && isLoading && <p className='mt-2'>Loading...</p>}
+                      {!isConnected && <p className='mt-2'>Please <Link href={'/login'}>connect your wallet</Link> to view your invoices</p>}
+                      {isConnected && !isLoading && !invoices.length && <p className='mt-2'>No invoices found for {address}</p>}
+                      {isConnected && isLoading && <p className='mt-2'>Loading invoces for {address}...</p>}
                   </td>
                 </tr>
               )}

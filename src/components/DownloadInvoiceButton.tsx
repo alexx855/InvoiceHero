@@ -5,7 +5,7 @@ export function DownloadInvoiceButton({ tokenId }: { tokenId: string }) {
     <Link
       href={`/invoice/${tokenId}/download`}
       target="_blank"
-      className="p-2.5 m-0 bg-white rounded hover:bg-gray-100"
+      className="p-2.5 m-0 rounded  cursor-pointer"
       aria-label="Download Invoice"
     >
       <span className="sr-only">Download Invoice</span>

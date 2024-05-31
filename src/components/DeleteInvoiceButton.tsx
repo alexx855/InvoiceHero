@@ -6,7 +6,7 @@ export function DeleteInvoiceButton({ tokenId, onDelete }: { tokenId: string, on
     <button
       disabled={false}
       onClick={() => onDelete(tokenId, `0x${tokenId}`)}
-      className="p-2.5 m-0 bg-white rounded hover:bg-gray-100 cursor-pointer"
+      className="p-2.5 m-0 rounded cursor-pointer"
       aria-label="Delete Invoice"
     >
       <span className="sr-only">Delete Invoice</span>

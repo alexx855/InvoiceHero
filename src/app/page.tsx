@@ -1,5 +1,5 @@
 import Background from '@/components/Background'
-import Login from '@/components/Login'
+import Landing from '@/components/Landing'
 import { Menu } from '@/components/Menu'
 
 function Page() {
@@ -9,7 +9,7 @@ function Page() {
       <div className="grid grid-rows-[auto,1fr] min-h-screen text-center">
         <Menu />
         <div className="flex items-center justify-center">
-          <Login />
+          <Landing/>
         </div>
       </div>
     </>

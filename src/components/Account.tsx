@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import { useAccount, useDisconnect, useSwitchChain } from 'wagmi'
-import useAccounts from '@/hooks/useAccounts'
-import { useRouter } from 'next/navigation'
-import useSession from '@/hooks/useSession';
+import { useAccount, useDisconnect, useSwitchChain } from "wagmi";
+import useAccounts from "@/hooks/useAccounts";
+import { useRouter } from "next/navigation";
+import useSession from "@/hooks/useSession";
 
 function Account() {
   const {
@@ -21,15 +21,15 @@ function Account() {
     error: sessionError,
   } = useSession();
 
-  const account = useAccount()
-  const { disconnectAsync } = useDisconnect()
+  const account = useAccount();
+  const { disconnectAsync } = useDisconnect();
   // const { connectors, connect, status, error } = useConnect()
   // const { data } = useBalance({
   //   address: account.address,
   //   config
   // })
-  const router = useRouter()
-  const { chains, switchChain, isPending } = useSwitchChain()
+  const router = useRouter();
+  const { chains, switchChain, isPending } = useSwitchChain();
 
   const logout = async () => {
     disconnectAsync();
@@ -41,32 +41,44 @@ function Account() {
     <>
       <div>
         <span>{account.status}</span>
-        {account.status === 'connected' && ( 
+        {account.status === "connected" && (
           <div>
             {chains.map((chain) => {
               if (chain.id === account.chainId) {
                 return (
-                  <button className='p-2 text-left' key={chain.id} disabled>
+                  <button className="p-2 text-left" key={chain.id} disabled>
                     {chain.name} (active)
                   </button>
-                )
+                );
               } else {
                 return (
-                  <button className='p-2 text-left' key={chain.id} onClick={() => switchChain({ chainId: chain.id })}>
+                  <button
+                    className="p-2 text-left"
+                    key={chain.id}
+                    onClick={() => switchChain({ chainId: chain.id })}
+                  >
                     Switch to {chain.name}
-                    {isPending && ' (switching)'}
+                    {isPending && " (switching)"}
                   </button>
-                )
+                );
               }
             })}
-            <button type="button" onClick={() => logout()}>
-              Disconnect
+
+            <button
+              type="button"
+              onClick={() => logout()}
+              className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+            >
+              <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+              <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-8 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+                Disconnect
+              </span>
             </button>
           </div>
         )}
       </div>
     </>
-  )
+  );
 }
 
-export default Account
+export default Account;

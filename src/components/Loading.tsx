@@ -12,9 +12,13 @@ export default function Loading({ copy, error }: LoadingProps) {
             <p>{error.message}</p>
           </div>
         )}
-        <div className="loader-container">
-          <div className="loader"></div>
-          <p>{copy}</p>
+        <div className="w-full">
+          <div className=""></div>
+          <div className="flex flex-row justify-center gap-2 mt-3">
+  <div className="w-4 h-4 rounded-full bg-gray-400 animate-bounce [animation-delay:.7s]"></div>
+  <div className="w-4 h-4 rounded-full bg-violet-800 animate-bounce [animation-delay:.3s]"></div>
+  <div className="w-4 h-4 rounded-full bg-gray-400 animate-bounce [animation-delay:.7s]"></div>
+</div>
         </div>
       </div>
     </div>

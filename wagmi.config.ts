@@ -4,7 +4,7 @@ import { isAddress } from 'viem';
 import { base, foundry as foundryChain } from 'wagmi/chains'
 
 let InvoiceHero: { [key: number]: `0x${string}` } = {
-  [base.id]: '0x8b5De5B773925bE625A99464c593Ee249920eF03'
+  [base.id]: '0x5D842DB44175e9E5642D6636CF7C3Ee59474502A'
 };
 
 if (process.env.NEXT_PUBLIC_ANVIL_CONTRACT_ADDRESS && isAddress(process.env.NEXT_PUBLIC_ANVIL_CONTRACT_ADDRESS)) {

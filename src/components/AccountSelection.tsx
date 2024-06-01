@@ -13,15 +13,20 @@ export default function AccountSelection({
   setCurrentAccount,
 }: AccountSelectionProp) {
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function handleSubmit(event: any) {
     event.preventDefault();
+    if (isLoading) {
+      return;
+    }
     if (!selectedValue) {
       toast.error("Please select an account");
       return;
     }
     const account = accounts[parseInt(selectedValue)];
-    return setCurrentAccount(account);
+    setIsLoading(true);
+    setCurrentAccount(account);
   }
 
   return (
@@ -52,7 +57,7 @@ export default function AccountSelection({
           >
             <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
             <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-8 py-1 text-sm font-medium text-white backdrop-blur-3xl">
-              Continue
+              {isLoading ? 'Loading...' : 'Continue'}
             </span>
           </button>
         </form>

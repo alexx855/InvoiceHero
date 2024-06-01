@@ -1,7 +1,7 @@
-import { formatAmount, type Invoice } from '@/invoice'
+import { formatAmount, type InvoicesView } from '@/invoice'
 import { InvoiceStatusLabel } from './InvoiceStatusLabel'
 
-export function InvoiceTable({ invoice }: { invoice: Invoice }) {
+export function InvoiceTable({ invoice }: { invoice: InvoicesView }) {
   return (
     <>
       <table style={{ width: '100%', tableLayout: 'fixed' }}>
@@ -10,10 +10,10 @@ export function InvoiceTable({ invoice }: { invoice: Invoice }) {
             <td style={{ verticalAlign: 'top', width: '50%' }}>
               <div>
               </div>
-              <span><b>user.display_name || address</b></span><br />
+              {/* <span><b>user.display_name || address</b></span><br /> */}
               <span>
                 <span style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
-                  user.additional_info
+                  {/* user.additional_info */}
                 </span>
               </span>
             </td>

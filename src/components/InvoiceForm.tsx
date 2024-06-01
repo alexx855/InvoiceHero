@@ -10,10 +10,10 @@ import {
   formatAmount,
 } from "@/invoice";
 import { encryptString } from "@lit-protocol/lit-node-client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useAccount, useChainId, useWriteContract } from "wagmi";
-import { stringToHex } from "viem";
+import { stringToHex, toHex } from 'viem'
 import Link from "next/link";
 import { simulateContract } from "@wagmi/core";
 import { config } from "@/wagmi";
@@ -30,20 +30,7 @@ export function InvoiceForm({
   const chainId = useChainId();
   const { data: hash, writeContract, error } = useWriteContract();
   const { litNodeClient } = useLit();
-  const router = useRouter();
-  const accs = [
-    {
-      contractAddress: "",
-      standardContractType: "",
-      chain: "base",
-      method: "",
-      parameters: [":userAddress"],
-      returnValueTest: {
-        comparator: "=",
-        value: address,
-      },
-    },
-  ];
+  const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     if (error && error.message && error.message.length > 0)
@@ -128,7 +115,6 @@ export function InvoiceForm({
       return toast("Lit node client not found");
     }
 
-    // Get form data
     const formData = new FormData(e.currentTarget);
     const formValues: Record<string, string> = {};
     formData.forEach((value, key) => {
@@ -153,7 +139,20 @@ export function InvoiceForm({
     };
 
     try {
-      // -- encrypt string
+      const accs = [
+        {
+          contractAddress: "",
+          standardContractType: "",
+          chain: "base",
+          method: "",
+          parameters: [":userAddress"],
+          returnValueTest: {
+            comparator: "=",
+            value: address,
+          },
+        },
+      ];
+
       const encryptRes = await encryptString(
         {
           accessControlConditions: accs,
@@ -163,27 +162,6 @@ export function InvoiceForm({
       );
 
       console.log("✅ encryptRes:", encryptRes);
-      // writeContract({
-      //   chainId,
-      //   address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
-      //   abi: invoiceHeroConfig.abi,
-      //   functionName: 'createInvoice',
-      //   args: [stringToHex('helloWorld'), stringToHex('helloWorld')]
-      // })
-      console.log(stringToHex(encryptRes.ciphertext));
-      console.log(stringToHex(encryptRes.dataToEncryptHash));
-
-      const result = await simulateContract(config, {
-        address:
-          invoiceHeroConfig.address[
-            chainId as keyof typeof invoiceHeroConfig.address
-          ],
-        abi: invoiceHeroConfig.abi,
-        functionName: "createInvoice",
-        args: [stringToHex("helloWorld"), stringToHex("helloWorld")],
-        account: address,
-      });
-      console.log(result);
 
       writeContract({
         address:
@@ -191,19 +169,42 @@ export function InvoiceForm({
             chainId as keyof typeof invoiceHeroConfig.address
           ],
         abi: invoiceHeroConfig.abi,
-        functionName: "createInvoice",
-        args: [stringToHex("helloWorld"), stringToHex("helloWorld")],
-        account: address,
-      });
+        functionName: 'createInvoice',
+        args: [stringToHex(encryptRes.ciphertext), stringToHex(encryptRes.dataToEncryptHash)],
+        account: address
+      })
+
     } catch (err) {
       console.error(err);
-      toast.error((err as Error)?.message || "Failed to encrypt message");
+      toast.error((err as Error)?.message || 'Failed to save invoice')
     }
-  };
+
+  }
+
+  const handleDownloadWithoutSaving = async () => {
+    const total_unit = invoice.total_unit
+    const total = getItemsTotal()
+
+    const invoiceData: InvoiceData = {
+      invoice_number: (formRef.current?.elements.namedItem('invoice_number') as HTMLInputElement)?.value || '',
+      status: (formRef.current?.elements.namedItem('status') as HTMLInputElement)?.value as InvoiceStatus || 'sent',
+      total: total,
+      total_unit: total_unit,
+      client_display_name: (formRef.current?.elements.namedItem('client_display_name') as HTMLInputElement)?.value || '',
+      creation_date: (formRef.current?.elements.namedItem('creation_date') as HTMLInputElement)?.value || '',
+      items: items,
+      due_date: (formRef.current?.elements.namedItem('due_date') as HTMLInputElement)?.value || '',
+      customer_notes: (formRef.current?.elements.namedItem('customer_notes') as HTMLInputElement)?.value || ''
+    }
+
+    const hexData = toHex(JSON.stringify(invoiceData))
+    window.open(`/invoice/${hexData}/download`, '_blank')
+  }
 
   return (
-    <form onSubmit={handleFormSubmit} className="border-2 rounded-xl p-5 mt-8">
-      <div className="flex w-full sm:space-x-4 sm:flex-row flex-col justify-between">
+    <form ref={formRef} onSubmit={handleFormSubmit} className="border-2 rounded-xl p-5 mt-8">
+      <div className='flex w-full sm:space-x-4 sm:flex-row flex-col justify-between'>
+
         <div className="mb-6">
           <label
             htmlFor="client_display_name"
@@ -470,7 +471,7 @@ export function InvoiceForm({
 
       <div className="w-full  flex justify-center gap-4 mb-6">
         <button
-          onClick={() => console.log("Download invoice")}
+          onClick={() => handleDownloadWithoutSaving()}
           type="button"
           name="download"
           className="relative inline-flex h-12 mt-4 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
@@ -496,16 +497,13 @@ export function InvoiceForm({
         </div>
       </div>
       <div className="font-medium w-full text-center">
-        {!isConnected ? (
-          <span>
-            Please <Link href="/login">sign in</Link> to save the invoice.
-          </span>
-        ) : (
-          <span>
-            This invoice will be saved to your account, would cost you a small
-            fee, to store it on the blockchain forever.
-          </span>
-        )}
+        {
+          !isConnected ? (
+            <span >Please <Link href="/">sign in</Link> to save the invoice.</span>
+          ) : (
+              <span >This invoice will be saved to your account, would cost you a small fee, to store it on the blockchain forever.</span>
+          )
+        }
       </div>
     </form>
   );

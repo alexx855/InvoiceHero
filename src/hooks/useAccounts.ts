@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AuthMethod } from '@lit-protocol/types';
 import { getPKPs, mintPKP } from '../lit';
 import { IRelayPKP } from '@lit-protocol/types';
@@ -12,12 +12,28 @@ export default function useAccounts() {
   const { litAuthClient } = useLit();
 
   /**
+   * Restore accounts from local storage
+   */
+  useEffect(() => {
+    const storedAccount = localStorage.getItem('lit-wallet-account');
+    console.log('storedAccount: ', storedAccount);
+    if (storedAccount) {
+      const account = JSON.parse(storedAccount);
+      if (account) {
+        console.log('restoring pkp: ', account);
+        setAccounts(prev => [...prev, account.pkp]);
+        setCurrentAccount(account.pkp);
+      }
+    }
+  }, [litAuthClient]);
+
+  /**
    * Fetch PKPs tied to given auth method
    */
   const fetchAccounts = useCallback(
     async (authMethod: AuthMethod): Promise<void> => {
       if (!litAuthClient) {
-        return;
+        throw new Error('Lit auth client not found');
       }
 
       setLoading(true);
@@ -27,9 +43,16 @@ export default function useAccounts() {
         const myPKPs = await getPKPs(litAuthClient, authMethod);
         console.log('fetchAccounts pkps: ', myPKPs);
         setAccounts(myPKPs);
+
         // If only one PKP, set as current account
         if (myPKPs.length === 1) {
           setCurrentAccount(myPKPs[0]);
+          console.log('setting current account', myPKPs[0]);
+          // localStorage.setItem('lit-wallet-account', JSON.stringify({
+          //   authMethod: authMethod,
+          //   pkp: myPKPs[0],
+          // }));
+
         }
       } catch (err) {
         console.error(err);
@@ -47,8 +70,7 @@ export default function useAccounts() {
   const createAccount = useCallback(
     async (authMethod: AuthMethod): Promise<void> => {
       if (!litAuthClient) {
-        // throw new Error('Lit auth client not found');
-        return;
+        throw new Error('Lit auth client not found');
       }
 
       setLoading(true);
@@ -58,6 +80,12 @@ export default function useAccounts() {
         // console.log('createAccount pkp: ', newPKP);
         setAccounts(prev => [...prev, newPKP]);
         setCurrentAccount(newPKP);
+
+        // localStorage.setItem('lit-wallet-account', JSON.stringify({
+        //   authMethod: authMethod,
+        //   pkp: newPKP,
+        // }));
+
       } catch (err) {
         console.error(err);
         // setError(err);

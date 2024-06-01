@@ -32,12 +32,10 @@ function Account() {
   const { chains, switchChain, isPending } = useSwitchChain();
 
   const logout = async () => {
-    try {
-      await disconnectAsync();
-    } catch (err) {}
-    localStorage.removeItem("lit-wallet-sig");
-    router.push("/login");
-  };
+    disconnectAsync();
+    localStorage.removeItem('lit-wallet-sig');
+    router.push('/');
+  }
 
   return (
     <>

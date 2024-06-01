@@ -18,8 +18,8 @@ Generate professional invoices for free in seconds, unlock blockchain-powered se
 
 *   **Frontend:** React, Next.js, Viem, Wagmi
 *   **Backend:** Solidity, Node.js, browserless/chromium (headless browser)
-*   **Web3:** Lit Protocol, Fleek (decentralized hosting)
-
+*   **Web3:** Lit Protocol
+*   
 ## Get Started
 
 1.  **Visit our website:** [https://invoice-hero.vercel.app](https://invoice-hero.vercel.app) 

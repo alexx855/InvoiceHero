@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import useAuthenticate from '../hooks/useAuthenticate';
 import useSession from '../hooks/useSession';
 import useAccounts from '../hooks/useAccounts';
-import Dashboard from './Dashboard';
 import LoginMethods from './LoginMethods';
 import AccountSelection from './AccountSelection';
 import CreateAccount from './CreateAccount';
@@ -13,11 +12,13 @@ import { ORIGIN, signInWithDiscord, signInWithGoogle } from '@/lit';
 import Loading from './Loading';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
+import InvoiceList from '@/components/InvoiceList';
 
 export default function Login() {
-  const redirectUri = ORIGIN + '/login';
+  const redirectUri = ORIGIN;
+  // const redirectUri = ORIGIN + '/login';
   const { litAuthClient, litNodeClient } = useLit();
-
+  const { isConnected, address } = useAccount()
   const {
     authMethod,
     authWithEthWallet,
@@ -41,15 +42,6 @@ export default function Login() {
   const router = useRouter();
   const account = useAccount()
 
-  useEffect(() => {
-    console.log('account: ', account);
-    console.log(account.status);
-    // handle disconnect
-    if (account.status === 'disconnected') {
-
-    }
-  }, [account, router])
-
   const error = authError || accountsError || sessionError;
 
   async function handleGoogleLogin() {
@@ -64,18 +56,19 @@ export default function Login() {
 
   useEffect(() => {
     // If user is authenticated, fetch accounts
-    console.log('authMethod: ', authMethod);
     if (authMethod) {
-      // router.replace(window.location.pathname, undefined,);
+      console.log('fetching accounts for authMethod', authMethod);
+      // router.replace(window.location.pathname, undefined);
       fetchAccounts(authMethod);
     }
   }, [authMethod, fetchAccounts, router]);
+
   useEffect(() => {
     // If user is authenticated and has selected an account, initialize session
-    if (authMethod && currentAccount && litAuthClient && litNodeClient) {
-      initSession(litNodeClient, litAuthClient, authMethod, currentAccount);
+    if (isConnected && currentAccount && litNodeClient) {
+      initSession(currentAccount);
     }
-  }, [authMethod, currentAccount, initSession, litAuthClient, litNodeClient]);
+  }, [currentAccount, litNodeClient, initSession, isConnected]);
 
   if (!litAuthClient || !litNodeClient) {
     return <Loading copy={'Loading...'} error={error} />;
@@ -96,9 +89,9 @@ export default function Login() {
   }
 
   // If user is authenticated and has selected an account, initialize session
-  if (account.status === 'connected' && currentAccount && sessionSigs) {
+  if (account.status === 'connected' && address && sessionSigs) {
     return (
-      <Dashboard currentAccount={currentAccount} sessionSigs={sessionSigs} />
+      <InvoiceList address={address} sessionSigs={sessionSigs} />
     );
   }
 
@@ -107,7 +100,14 @@ export default function Login() {
     return (
       <AccountSelection
         accounts={accounts}
-        setCurrentAccount={setCurrentAccount}
+        setCurrentAccount={(acc: any) => {
+          console.log('setting current account', acc)
+          setCurrentAccount(acc)
+          // localStorage.setItem('lit-wallet-account', JSON.stringify({
+          //   authMethod: authMethod,
+          //   pkp: acc,
+          // }));
+        }}
       />
     );
   }

@@ -21,6 +21,22 @@ export interface InvoiceData {
   due_date?: string;
   customer_notes?: string;
 }
+export interface InvoicesView extends InvoiceData {
+  id: string;
+  access: boolean;
+}
+
+export function isInvoiceData(obj: any): obj is InvoiceData {
+  return 'invoice_number' in obj && typeof obj.invoice_number === 'string'
+    && 'status' in obj && typeof obj.status === 'string'
+    && 'client_display_name' in obj && typeof obj.client_display_name === 'string'
+    && 'creation_date' in obj && typeof obj.creation_date === 'string'
+    && 'total' in obj && typeof obj.total === 'number'
+    && 'total_unit' in obj && typeof obj.total_unit === 'string'
+    && 'items' in obj && Array.isArray(obj.items)
+    && (!obj.due_date || typeof obj.due_date === 'string')
+    && (!obj.customer_notes || typeof obj.customer_notes === 'string');
+}
 export interface Invoice extends InvoiceData {
   id: string;
 }

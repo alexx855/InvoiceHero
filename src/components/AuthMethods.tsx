@@ -1,5 +1,5 @@
-import { AuthView } from '@/lit';
-import Image from 'next/image';
+import { AuthView } from "@/lit";
+import Image from "next/image";
 
 interface AuthMethodsProps {
   handleGoogleLogin: () => Promise<void>;
@@ -13,13 +13,13 @@ const AuthMethods = ({
   setView,
 }: AuthMethodsProps) => {
   return (
-    <ul className="flex flex-col items-stretch space-y-4 max-w-[250px] m-auto">
+    <ul className="flex flex-col items-stretch space-y-4 max-w-[300px] m-auto">
       <li>
         <button
           disabled
-          className=" opacity-50 flex justify-between items-center w-full py-2 px-5 text-white bg-[#9861c4] rounded-full focus:opacity-80"
+          className="w-full flex gap-2 opacity-50 items-center justify-center px-8 py-3 text-base leading-6 font-medium rounded-md text-purple-700 dark:text-purple-700 bg-purple-100 hover:bg-purple-50 hover:text-purple-600 focus:ring ring-offset-2 ring-purple-100 focus:outline-none transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
           type="button"
-          title='Sign in with Google'
+          title="Sign in with Google"
           onClick={handleGoogleLogin}
         >
           Sign in with Google
@@ -29,9 +29,9 @@ const AuthMethods = ({
       <li>
         <button
           disabled
-          className=" opacity-50 flex justify-between items-center w-full py-2 px-5 text-white bg-[#9861c4] rounded-full focus:opacity-80"
+          className="w-full flex gap-2 opacity-50 items-center justify-center px-8 py-3 text-base leading-6 font-medium rounded-md text-purple-700 dark:text-purple-700 bg-purple-100 hover:bg-purple-50 hover:text-purple-600 focus:ring ring-offset-2 ring-purple-100 focus:outline-none transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
           type="button"
-          title='Sign in with Discord'
+          title="Sign in with Discord"
           onClick={handleDiscordLogin}
         >
           Sign in with Discord
@@ -40,10 +40,10 @@ const AuthMethods = ({
       </li>
       <li>
         <button
-          className="flex justify-between items-center w-full py-2 px-5 text-white bg-[#9861c4] rounded-full focus:opacity-80"
+          className="w-full flex gap-2 items-center justify-center px-8 py-3 text-base leading-6 font-medium rounded-md text-purple-700 dark:text-purple-700 bg-purple-100 hover:bg-purple-50 hover:text-purple-600 focus:ring ring-offset-2 ring-purple-100 focus:outline-none transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
           type="button"
-          title='Sign in with wallet'
-          onClick={() => setView('wallet')}
+          title="Sign in with wallet"
+          onClick={() => setView("wallet")}
         >
           Sign in with Wallet
           <svg

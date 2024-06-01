@@ -1,5 +1,6 @@
 import Background from '@/components/Background'
 import { InvoiceList } from '@/components/InvoiceList'
+import Landing from '@/components/Landing'
 import { Menu } from '@/components/Menu'
 
 function Page() {
@@ -9,7 +10,7 @@ function Page() {
       <div className="grid grid-rows-[auto,1fr] h-screen text-center">
         <Menu />
         <div className="flex items-center justify-center">
-          <InvoiceList />
+          <Landing/>
         </div>
       </div>
     </>

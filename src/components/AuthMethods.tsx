@@ -13,7 +13,7 @@ const AuthMethods = ({
   setView,
 }: AuthMethodsProps) => {
   return (
-    <ul className="flex flex-col items-stretch space-y-4 max-w-[300px] m-auto">
+    <ul className="flex w-full flex justify-center gap-8 ">
       <li>
         <button
           disabled

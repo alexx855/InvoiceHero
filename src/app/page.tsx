@@ -1,5 +1,4 @@
 import Background from '@/components/Background'
-import { InvoiceList } from '@/components/InvoiceList'
 import Landing from '@/components/Landing'
 import { Menu } from '@/components/Menu'
 

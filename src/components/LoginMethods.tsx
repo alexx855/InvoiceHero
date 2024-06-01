@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { useState } from 'react';
-import AuthMethods from './AuthMethods';
-import WalletMethods from './WalletMethods';
-import WebAuthn from './WebAuthn';
-import { AuthView } from '@/lit';
+import { useState } from "react";
+import AuthMethods from "./AuthMethods";
+import WalletMethods from "./WalletMethods";
+import WebAuthn from "./WebAuthn";
+import { AuthView } from "@/lit";
 
 interface LoginProps {
   handleGoogleLogin: () => Promise<void>;
@@ -19,7 +19,7 @@ export default function LoginMethods({
   authWithEthWallet,
   error,
 }: LoginProps) {
-  const [view, setView] = useState<AuthView>('default');
+  const [view, setView] = useState<AuthView>("default");
 
   return (
     <div className="container">
@@ -29,10 +29,9 @@ export default function LoginMethods({
             <p>{error.message}</p>
           </div>
         )}
-        {view === 'default' && (
+        {view === "default" && (
           <>
-            <h1 className='text-lg font-bold'>Welcome back</h1>
-            <p className='mb-4'>Access your account</p>
+            <p className="mb-4 mt-2">Access your account</p>
             <AuthMethods
               handleGoogleLogin={handleGoogleLogin}
               handleDiscordLogin={handleDiscordLogin}
@@ -40,7 +39,7 @@ export default function LoginMethods({
             />
           </>
         )}
-        {view === 'wallet' && (
+        {view === "wallet" && (
           <WalletMethods
             authWithEthWallet={authWithEthWallet}
             setView={setView}

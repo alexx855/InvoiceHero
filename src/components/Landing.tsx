@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { TypewriterEffectSmooth } from "./HeroHighlight";
 import { TextGenerateEffect } from "./TypeWriteEffect";
+import Login from "./Login";
 const words = [
   {
     text: "Invoice",
@@ -106,6 +107,8 @@ const Landing = () => {
             </linearGradient>
           </defs>
         </svg>
+
+        <Login/>
       </section>
     </div>
   );

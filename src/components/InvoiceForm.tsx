@@ -202,7 +202,7 @@ export function InvoiceForm({
   }
 
   return (
-    <form ref={formRef} onSubmit={handleFormSubmit} className="border-2 rounded-xl p-5 mt-8">
+    <form ref={formRef} onSubmit={handleFormSubmit} className="border-2 border-gray-400 rounded-xl px-16 py-4 mt-8">
       <div className='flex w-full sm:space-x-4 sm:flex-row flex-col justify-between'>
 
         <div className="mb-6">

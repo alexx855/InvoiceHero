@@ -1,17 +1,14 @@
 import Link from "next/link";
 import Account from "@/components/Account";
+import Image from "next/image";
+import logo from "@/app/assets/logo.png";
 
 export function Menu() {
   return (
     <nav className="w-full flex  border-b border-gray-200 p-3 z-100">
       <div className="flex flex-row items-center ">
-        <a href="/" className="flex">
-          {/* logo */}
-          <span
-            className={` self-center text-sm md:text-2xl font-semibold whitespace-nowrap text-white`}
-          >
-            Invoice Hero
-          </span>
+        <a href="/" className="flex pointer">
+          <Image src={logo} width={300} alt="logo" />
         </a>
       </div>
       <div className="w-full flex justify-center mr-14">
@@ -34,7 +31,6 @@ export function Menu() {
               Create
             </span>
           </Link>
-         
         </div>
       </div>
       <div className="flex flex-row items-center justify-end">

@@ -1,11 +1,46 @@
 "use client"
+import { invoiceHeroConfig } from '@/generated'
+import { useEffect } from 'react'
+import { toast } from 'sonner'
+import { useAccount, useWriteContract } from 'wagmi'
+import { useChainId } from 'wagmi';
 
-export function DeleteInvoiceButton({ tokenId, onDelete }: { tokenId: string, onDelete: (tokenId: string, result: `0x${string}`) => void }
+export function DeleteInvoiceButton({ tokenId, onDelete }: { tokenId: string, onDelete: (tokenId: string) => void }
 ) {
+  const chainId = useChainId()
+  const { address } = useAccount()
+  const { data: burnHash, writeContract } = useWriteContract()
+  useEffect(() => {
+    console.log('burnHash:', burnHash)
+    if (burnHash && burnHash.length > 0) {
+      toast.success('Invoice deleted successfully.', {
+        action: {
+          label: 'View explorer',
+          onClick: () => {
+            window.open(`https://basescan.org/tx/${burnHash}`, '_blank')
+          }
+        },
+        duration: 10000
+      })
+      onDelete(tokenId)
+    }
+  }, [burnHash, onDelete, tokenId])
+
+  function handleDelete() {
+    writeContract({
+      address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
+      abi: invoiceHeroConfig.abi,
+      functionName: 'burn',
+      args: [BigInt(tokenId)],
+      account: address
+    })
+    console.log('Deleting invoice with tokenId:', tokenId)
+  }
+
   return (
     <button
       disabled={false}
-      onClick={() => onDelete(tokenId, `0x${tokenId}`)}
+      onClick={handleDelete}
       className="p-2.5 m-0 rounded cursor-pointer"
       aria-label="Delete Invoice"
     >

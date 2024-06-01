@@ -9,7 +9,7 @@ function Background() {
   ];
   return (
     <>
-      <div className="fixed h-screen w-screen top-0 left-0 bg-gradient-to-br from-[#9861c4] to-[#2f2f2f] overflow-hidden z-[-1]">
+      <div className="fixed h-screen w-screen top-0 left-0 overflow-hidden z-[-1]">
         {squares.map((square) => (
           <div
             key={square.id}

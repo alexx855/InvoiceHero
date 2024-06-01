@@ -2157,8 +2157,7 @@ export const iMulticall3Abi = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * - [__View Contract on Base Basescan__](https://basescan.org/address/0x8b5De5B773925bE625A99464c593Ee249920eF03)
- * -
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x5D842DB44175e9E5642D6636CF7C3Ee59474502A)
  */
 export const invoiceHeroAbi = [
   { type: 'constructor', inputs: [], stateMutability: 'nonpayable' },
@@ -2575,17 +2574,14 @@ export const invoiceHeroAbi = [
 ] as const
 
 /**
- * - [__View Contract on Base Basescan__](https://basescan.org/address/0x8b5De5B773925bE625A99464c593Ee249920eF03)
- * -
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x5D842DB44175e9E5642D6636CF7C3Ee59474502A)
  */
 export const invoiceHeroAddress = {
-  8453: '0x8b5De5B773925bE625A99464c593Ee249920eF03',
-  31337: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+  8453: '0x5D842DB44175e9E5642D6636CF7C3Ee59474502A',
 } as const
 
 /**
- * - [__View Contract on Base Basescan__](https://basescan.org/address/0x8b5De5B773925bE625A99464c593Ee249920eF03)
- * -
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x5D842DB44175e9E5642D6636CF7C3Ee59474502A)
  */
 export const invoiceHeroConfig = {
   address: invoiceHeroAddress,

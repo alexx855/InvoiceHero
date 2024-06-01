@@ -13,15 +13,20 @@ export default function AccountSelection({
   setCurrentAccount,
 }: AccountSelectionProp) {
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function handleSubmit(event: any) {
     event.preventDefault();
+    if (isLoading) {
+      return;
+    }
     if (!selectedValue) {
       toast.error('Please select an account');
       return;
     }
     const account = accounts[parseInt(selectedValue)];
-    return setCurrentAccount(account);
+    setIsLoading(true);
+    setCurrentAccount(account);
   }
 
   return (
@@ -47,7 +52,7 @@ export default function AccountSelection({
             ))}
           </div>
           <button type="submit" >
-            Continue
+            {isLoading ? 'Loading...' : 'Continue'}
           </button>
         </form>
       </div>

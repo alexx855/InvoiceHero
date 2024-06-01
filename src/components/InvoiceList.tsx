@@ -1,216 +1,179 @@
 "use client"
 import { InvoiceStatusLabel } from '@/components/InvoiceStatusLabel'
 import Link from 'next/link';
-import { useAccount, useChainId, useReadContract } from 'wagmi';
+import { useChainId, useReadContract } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { DownloadInvoiceButton } from './DownloadInvoiceButton';
 import { DeleteInvoiceButton } from './DeleteInvoiceButton';
-import { Invoice, formatAmount, getInvoicesList } from '@/invoice';
+import { InvoicesView, formatAmount, isInvoiceData } from '@/invoice';
 import { toast } from 'sonner';
-import { invoiceHeroAbi, invoiceHeroAddress, invoiceHeroConfig } from '@/generated';
-import { INVOICE_MOCK } from '@/constants';
-import useSession from '@/hooks/useSession';
+import { invoiceHeroConfig } from '@/generated';
 import { useLit } from '@/hooks/useLit';
-import { getEthersSigner } from '@/ethers';
-import { LitAccessControlConditionResource, LitAbility, createSiweMessageWithRecaps, generateAuthSig } from '@lit-protocol/auth-helpers';
 import { decryptToString } from '@lit-protocol/lit-node-client';
-import { AuthCallbackParams } from '@lit-protocol/types';
 import { config } from '@/wagmi';
+import { fromHex, toHex } from 'viem';
+import { SessionSigs } from "@lit-protocol/types";
 import { readContract } from '@wagmi/core'
 
-export function InvoiceList() {
-  const { address, isConnected } = useAccount()
+interface InvoiceListProps {
+  address: `0x${string}`
+  sessionSigs: SessionSigs;
+}
+
+export default function InvoiceList({
+  address,
+  sessionSigs,
+}: InvoiceListProps) {
   const chainId = useChainId()
   const [isLoading, setIsLoading] = useState(true)
   const { litNodeClient } = useLit();
-  const { initSession, sessionSigs, loading, error } = useSession()
-  const [invoices, setInvoices] = useState<Invoice[]>([])
+  const [invoices, setInvoices] = useState<InvoicesView[]>([])
 
   const { data, error: readError, isLoading: readIsLoading } = useReadContract({
     abi: invoiceHeroConfig.abi,
     address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
     functionName: 'balanceOf',
-    args: [address!],
+    args: [address],
   })
-  // console.log('data: ', data)
-  // console.log('error: ', error)
-  // console.log('address: ', address)
-  // console.log('isLoading: ', isLoading)
 
-  // create mock invoices for now
+  const loading = isLoading || readIsLoading
+  const error = readError
+
+  function updateInvoice(id: string, newInvoiceData: InvoicesView) {
+    setInvoices(prevInvoices => {
+      const updatedInvoices = prevInvoices.map(invoice => {
+        if (invoice.id === id) {
+          return { ...invoice, ...newInvoiceData };
+        }
+        return invoice;
+      });
+
+      return updatedInvoices;
+    });
+  }
+
   useEffect(() => {
     async function getAndDecryptData() {
-      //  && sessionSigs
       if (!address || !litNodeClient) {
         console.error('No address or litNodeClient found')
         return
       }
-      const accs = [
-        {
-          contractAddress: "",
-          standardContractType: "",
-          chain: "base",
-          method: "",
-          parameters: [":userAddress"],
-          returnValueTest: {
-            comparator: "=",
-            value: address,
-          },
-        },
-      ];
-      try {
 
-        const invoices: Invoice[] = []
-        console.log('data: ', data)
-        console.log('sessionSigs: ', sessionSigs)
-        if (!data) {
-          console.error('No invoices found for address', address)
-          // toast.error(`No invoices found for address ${address}`)
-          // setInvoices([])
-          // setIsLoading(false)
-          return
+      if (!sessionSigs) {
+        console.error('cannot decrypt without sessionSigs')
+        return
+      }
+
+      console.log('data: ', data)
+      console.log('sessionSigs: ', sessionSigs)
+
+      if (!data || !Number(data)) {
+        console.error('No invoices found for address', address)
+        return
+      }
+
+      setIsLoading(true)
+      const invoices: InvoicesView[] = []
+
+      const latestBlockhash = await litNodeClient.getLatestBlockhash();
+      console.log("latestBlockhash:", latestBlockhash);
+
+      for (let i = 0; i < Number(data); i++) {
+
+        // get token id for the invoice i
+        const id = await readContract(config, {
+          abi: invoiceHeroConfig.abi,
+          address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
+          functionName: 'tokenOfOwnerByIndex',
+          args: [address, BigInt(i)],
+        })
+
+        let ciphertext: string | `0x${string}` = ''
+        let dataHash: string | `0x${string}` = ''
+        try {
+          // read the encrypted data from the contract
+          const result = await readContract(config, {
+            abi: invoiceHeroConfig.abi,
+            address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
+            functionName: 'getInvoiceData',
+            args: [BigInt(i)],
+          })
+          console.log(result);
+          ciphertext = fromHex(result[0], 'string');
+          dataHash = fromHex(result[1], 'string');
+        } catch (error) {
+          console.error(error)
+          continue
         }
 
-        // Decrypt data
-        const invoicesOwned = [...Array(Number(data))].map((_, i) => ({
-          id: i.toString(),
-        }))
+        console.log('ciphertext: ', ciphertext)
+        console.log('dataHash: ', dataHash)
 
-        console.log('invoicesOwned: ', invoicesOwned)
+        try {
+          // Decrypt the data
+          const accs = [
+            {
+              contractAddress: "",
+              standardContractType: "",
+              chain: "base",
+              method: "",
+              parameters: [":userAddress"],
+              returnValueTest: {
+                comparator: "=",
+                value: address,
+              },
+            },
+          ];
 
-        for (let i = 0; i < invoicesOwned.length; i++) {
-          try {
-            const result = await readContract(config, {
-              abi: invoiceHeroConfig.abi,
-              address: invoiceHeroConfig.address[chainId as keyof typeof invoiceHeroConfig.address],
-              functionName: 'getInvoiceData',
-              args: [BigInt(i)],
-            })
-            console.log(result);
+          // -- Decrypt the encrypted string
+          const decryptRes = await decryptToString(
+            {
+              accessControlConditions: accs,
+              ciphertext: ciphertext,
+              dataToEncryptHash: dataHash,
+              sessionSigs: sessionSigs,
+              chain: "base",
+            },
+            litNodeClient
+          );
 
-          } catch (error) {
-            console.error(error)
+          console.log("✅ decryptRes:", decryptRes);
+          const invoiceData = JSON.parse(decryptRes);
+          if (!isInvoiceData(invoiceData)) {
+            console.error('Invalid invoice data', invoiceData)
+            continue
           }
+          // validate if the decrypted data is a valid invoice data
 
-          // TODO:
-          // console.log('data[i].ciphertext: ', data[i].ciphertext)
-          // console.log('data[i].dataHash: ', data[i].dataHash)
-
-          // try {
-          //   // -- decrypt string
-          //   const accsResourceString =
-          //     await LitAccessControlConditionResource.generateResourceString(
-          //       accs,
-          //       data[i].dataHash
-          //     );
-
-          //   const latestBlockhash = await litNodeClient.getLatestBlockhash();
-          //   console.log("latestBlockhash:", latestBlockhash);
-
-          //   const signer = await getEthersSigner(config);
-          //   const walletAddress = await signer.getAddress();
-
-          //   const sessionSigsToDecryptThing = await litNodeClient.getSessionSigs({
-          //     resourceAbilityRequests: [
-          //       {
-          //         resource: new LitAccessControlConditionResource(accsResourceString),
-          //         ability: LitAbility.AccessControlConditionDecryption,
-          //       },
-          //     ],
-          //     authNeededCallback: async (params: AuthCallbackParams) => {
-          //       if (!params.uri) {
-          //         throw new Error("uri is required");
-          //       }
-          //       if (!params.expiration) {
-          //         throw new Error("expiration is required");
-          //       }
-
-          //       if (!params.resourceAbilityRequests) {
-          //         throw new Error("resourceAbilityRequests is required");
-          //       }
-
-          //       const toSign = await createSiweMessageWithRecaps({
-          //         uri: params.uri,
-          //         expiration: params.expiration,
-          //         resources: params.resourceAbilityRequests,
-          //         walletAddress,
-          //         nonce: latestBlockhash,
-          //         litNodeClient,
-          //       });
-
-          //       const authSig = await generateAuthSig({
-          //         signer,
-          //         toSign,
-          //       });
-
-          //       return authSig;
-          //     },
-          //   });
-
-          //   // -- Decrypt the encrypted string
-          //   const decryptRes = await decryptToString(
-          //     {
-          //       accessControlConditions: accs,
-          //       ciphertext: data[i].ciphertext,
-          //       dataToEncryptHash: data[i].dataHash,
-          //       sessionSigs: sessionSigsToDecryptThing,
-          //       chain: "base",
-          //     },
-          //     litNodeClient
-          //   );
-
-          //   console.log("✅ decryptRes:", decryptRes);
-
-          //   invoices.push({
-          //     id: data[i].tokenId,
-          //     ...JSON.parse(decryptRes)
-          //   })
-
-          //   toast.success('Message decrypted successfully: ' + decryptRes);
-          // } catch (err) {
-          //   console.error(err);
-          //   toast.error((err as Error)?.message || 'Failed to decrypt message');
-          // }
+          invoices.push({
+            id: id.toString(),
+            access: true,
+            ...invoiceData
+          })
 
 
-          const invoice = {
-            ...INVOICE_MOCK,
-            id: i.toString(),
-            invoice_number: i.toString(),
-          }
-          invoices.push(invoice)
-
+        } catch (err) {
+          console.error(err);
         }
-
         setInvoices(invoices)
         setIsLoading(false)
-      } catch (error) {
-        console.log(error)
       }
+
     }
 
     if (data) {
       getAndDecryptData();
     }
-  }, [data, address, litNodeClient, sessionSigs])
+  }, [data, address, litNodeClient, sessionSigs, chainId])
 
   useEffect(() => {
     if (error) {
       toast.error('Error fetching invoices')
+      setIsLoading(false)
     }
   }, [error])
 
-  const onDeleteInvoice = async (invoiceId: string, result: `0x${string}`) => {
-    toast.success(`Invoice ${invoiceId} deleted`, {
-      action: {
-        label: 'View explorer',
-        onClick: () => {
-          // TODO: open explorer tx with result
-        }
-      },
-      duration: 10000
-    })
-
+  const onDeleteInvoice = async (invoiceId: string) => {
     // optimistic update
     setInvoices(invoices.filter((invoice) => invoice.id !== invoiceId))
   }
@@ -222,6 +185,7 @@ export function InvoiceList() {
           <table className="w-full m-0 text-sm text-left ">
             <thead className="text-xs  uppercase ">
               <tr>
+                <th scope="col" className="px-4 py-3">ID</th>
                 <th scope="col" className="px-4 py-3">Invoice Number</th>
                 <th scope="col" className="px-4 py-3 text-right">Status</th>
                 <th scope="col" className="px-4 py-3 text-right">Client</th>
@@ -236,33 +200,36 @@ export function InvoiceList() {
               {invoices.length ? (
                 invoices.map((data, inv) =>
                 (
-                  <tr key={data.id} className="border-b">
+                  <tr key={data.id} className={'border-b'}>
                     <th scope="row" className="px-4 py-3 font-medium  whitespace-nowrap">
-                      <Link href={`/invoice/${data.id}`} className=" text-blue-600 hover:text-blue-700 hover:underline">
-                        #{data.invoice_number}
+                      <Link href={`/invoice/${toHex(JSON.stringify(data))}`} className=" text-blue-600 hover:text-blue-700 hover:underline">
+                        #{data.id}
                       </Link>
                     </th>
-                    <td className="px-4 py-3 text-right">
+                    <th scope="row" className="px-4 py-3 font-medium  whitespace-nowrap">
+                      {data.invoice_number}
+                    </th>
+                    <td className={`px-4 py-3 text-right ${data.access ? '' : 'blur'}`}>
                       <InvoiceStatusLabel status={data.status} />
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className={`px-4 py-3 text-right ${data.access ? '' : 'blur'}`}>
                       <span className=''>
                         {data.client_display_name}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className={`px-4 py-3 text-right ${data.access ? '' : 'blur'}`}>
                       <span className=''>
                         {new Date(data.creation_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className={`px-4 py-3 text-right ${data.access ? '' : 'blur'}`}>
                       <span className=''>
                         {data.total && formatAmount(data.total, data.total_unit || 'USD')}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex flex-row items-stretch gap-2 justify-end">
-                        <DownloadInvoiceButton tokenId={data.id} />
+                        <DownloadInvoiceButton data={data} />
                         <DeleteInvoiceButton tokenId={data.id} onDelete={onDeleteInvoice} />
                       </div>
                     </td>
@@ -271,9 +238,8 @@ export function InvoiceList() {
               ) : (
                 <tr className="border-b">
                     <td colSpan={6} className="px-4 py-3">
-                      {!isConnected && <p className='mt-2'>Please <Link href={'/login'}>connect your wallet</Link> to view your invoices</p>}
-                      {isConnected && !isLoading && !invoices.length && <p className='mt-2'>No invoices found for {address}</p>}
-                      {isConnected && isLoading && <p className='mt-2'>Loading invoces for {address}...</p>}
+                      {!loading && !invoices.length && <p className='mt-2'>No invoices found for {address}</p>}
+                      {!error && loading && <p className='mt-2 animate-pulse'>Loading invoices...</p>}
                   </td>
                 </tr>
               )}

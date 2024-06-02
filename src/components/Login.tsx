@@ -57,8 +57,6 @@ export default function Login() {
   useEffect(() => {
     // If user is authenticated, fetch accounts
     if (authMethod) {
-      console.log("fetching accounts for authMethod", authMethod);
-      // router.replace(window.location.pathname, undefined);
       fetchAccounts(authMethod);
     }
   }, [authMethod, fetchAccounts, router]);
@@ -101,12 +99,7 @@ export default function Login() {
         <AccountSelection
           accounts={accounts}
           setCurrentAccount={(acc: any) => {
-            console.log("setting current account", acc);
             setCurrentAccount(acc);
-            // localStorage.setItem('lit-wallet-account', JSON.stringify({
-            //   authMethod: authMethod,
-            //   pkp: acc,
-            // }));
           }}
         />
       </div>

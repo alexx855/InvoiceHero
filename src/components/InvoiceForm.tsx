@@ -161,8 +161,6 @@ export function InvoiceForm({
         litNodeClient
       );
 
-      console.log("✅ encryptRes:", encryptRes);
-
       writeContract({
         address:
           invoiceHeroConfig.address[

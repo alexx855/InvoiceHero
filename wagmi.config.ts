@@ -8,8 +8,7 @@ let InvoiceHero: { [key: number]: `0x${string}` } = {
 };
 
 if (process.env.NEXT_PUBLIC_ANVIL_CONTRACT_ADDRESS && isAddress(process.env.NEXT_PUBLIC_ANVIL_CONTRACT_ADDRESS)) {
-  InvoiceHero[foundryChain.id] = process.env.NEXT_PUBLIC_ANVIL_CONTRACT_ADDRESS;
-  console.log(`Using Anvil contract address: ${process.env.NEXT_PUBLIC_ANVIL_CONTRACT_ADDRESS}`);
+  InvoiceHero[foundryChain.id] = process.env.NEXT_PUBLIC_ANVIL_CONTRACT_ADDRESS as `0x${string}`;
 }
 
 export default defineConfig({

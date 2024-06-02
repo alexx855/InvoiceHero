@@ -64,9 +64,6 @@ export default function InvoiceList({
         return
       }
 
-      console.log('data: ', data)
-      console.log('sessionSigs: ', sessionSigs)
-
       if (!data || !Number(data)) {
         console.error('No invoices found for address', address)
         return
@@ -76,7 +73,6 @@ export default function InvoiceList({
       const invoices: InvoicesView[] = []
 
       const latestBlockhash = await litNodeClient.getLatestBlockhash();
-      console.log("latestBlockhash:", latestBlockhash);
 
       for (let i = 0; i < Number(data); i++) {
 
@@ -98,16 +94,12 @@ export default function InvoiceList({
             functionName: 'getInvoiceData',
             args: [BigInt(i)],
           })
-          console.log(result);
           ciphertext = fromHex(result[0], 'string');
           dataHash = fromHex(result[1], 'string');
         } catch (error) {
           console.error(error)
           continue
         }
-
-        console.log('ciphertext: ', ciphertext)
-        console.log('dataHash: ', dataHash)
 
         try {
           // Decrypt the data
@@ -137,14 +129,12 @@ export default function InvoiceList({
             litNodeClient
           );
 
-          console.log("✅ decryptRes:", decryptRes);
           const invoiceData = JSON.parse(decryptRes);
           if (!isInvoiceData(invoiceData)) {
             console.error('Invalid invoice data', invoiceData)
             continue
           }
           // validate if the decrypted data is a valid invoice data
-
           invoices.push({
             id: id.toString(),
             access: true,

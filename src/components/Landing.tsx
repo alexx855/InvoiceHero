@@ -38,7 +38,7 @@ const Landing = () => {
                   <div className=" flex flex-col justify-center items-center">
                     <TypewriterEffectSmooth words={words} />
                     <TextGenerateEffect
-                      words={`Create & share professional invoices in seconds, totally free! Upgrade to unlock blockchain-powered security, crypto payments, and more.
+                      words={`Create & share professional invoices in seconds, totally free! Sign in to unlock blockchain-powered security, crypto payments, and more.
                     `}
                     />
                   </div>

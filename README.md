@@ -1,6 +1,6 @@
-# InvoiceHero
-
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+# InvoiceHero
+ETHglobal hackathon HackFS 2024
 
 Generate professional invoices for free in seconds, unlock blockchain-powered security. Perfect for freelancers, entrepreneurs, and businesses of all sizes!
 
@@ -8,6 +8,7 @@ Generate professional invoices for free in seconds, unlock blockchain-powered se
 
 **Privacy and Security:** Lit Protocol encrypts your data and stores it on a decentralized network.
 **PDF Downloads:**  High-quality, printable and downloadable invoices.
+**Shareable Links:**  Share your invoices with clients with a single link, all data is encrypted.
 
 ## Why InvoiceHero?
 
@@ -22,9 +23,9 @@ Generate professional invoices for free in seconds, unlock blockchain-powered se
 *   
 ## Get Started
 
-1.  **Visit our website:** [https://invoice-hero.vercel.app](https://invoice-hero.vercel.app) 
+1.  **Visit our website:** [https://invoice-hero.vercel.app/create](https://invoice-hero.vercel.app/create) 
 2.  **Sign in to your account, or not 🫡**
-3.  **Start invoicing!**
+3.  **Start invoicing! and save your invoices to the blockchain forever for a small fee.**
 
 ## Development
 

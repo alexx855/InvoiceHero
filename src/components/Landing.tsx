@@ -19,12 +19,12 @@ const words = [
 const Landing = () => {
   return (
     <div>
-      <div className="flex z-2 absolute top-0 left-0">
+      <div className="flex z-[-2] absolute top-0 left-0">
         <span className="flex from-gray-500 to-transparent bg-gradient-to-b w-[1.1px] h-[70vh] mx-20"></span>
         <span className="flex from-gray-500 to-transparent bg-gradient-to-b w-[1.1px] h-[70vh] mx-20"></span>
         <span className="flex from-gray-500 to-transparent bg-gradient-to-b w-[1.1px] h-[70vh] mx-20"></span>
       </div>
-      <div className="flex z-2 absolute top-0 right-0">
+      <div className="flex z-[-2] absolute top-0 right-0">
         <span className="flex from-gray-500 to-transparent bg-gradient-to-b w-[1.1px] h-[70vh] mx-20"></span>
         <span className="flex from-gray-500 to-transparent bg-gradient-to-b w-[1.1px] h-[70vh] mx-20"></span>
         <span className="flex from-gray-500 to-transparent bg-gradient-to-b w-[1.1px] h-[70vh] mx-20"></span>

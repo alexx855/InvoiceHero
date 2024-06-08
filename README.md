@@ -1,3 +1,6 @@
+Archived: Lit protocol participation track winners 
+[https://ethglobal.com/showcase/invoicehero-f4n02](https://ethglobal.com/showcase/invoicehero-f4n02)
+
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # InvoiceHero
 ETHglobal hackathon HackFS 2024
